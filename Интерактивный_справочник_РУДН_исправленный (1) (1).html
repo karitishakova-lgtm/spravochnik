@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Доступный РУДН</title>
+<style>
+  :root{
+    --bg:#f1f3f4;
+    --surface:#ffffff;
+    --surface-2:#f7f8fa;
+    --ink:#292c3d;
+    --ink-soft:#5b6472;
+    --ink-faint:#8b93a3;
+    --line:#e3e5ea;
+    --line-soft:#edeef2;
+    --blue:#0079c1;
+    --blue-deep:#005a92;
+    --blue-tint:#e7f3fb;
+    --red:#ee2a24;
+    --red-tint:#fdecec;
+    --green:#009a3e;
+    --green-tint:#e6f6ec;
+    --radius-s:8px;
+    --radius-m:14px;
+    --radius-l:22px;
+    --shadow: 0 1px 2px rgba(41,44,61,.06), 0 8px 24px -12px rgba(41,44,61,.14);
+    color-scheme: light;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --bg:#12141c;
+      --surface:#1b1e29;
+      --surface-2:#20232f;
+      --ink:#eef1f6;
+      --ink-soft:#aab1c0;
+      --ink-faint:#7d8494;
+      --line:#2c303f;
+      --line-soft:#252836;
+      --blue:#4fb3ea;
+      --blue-deep:#8fd0f5;
+      --blue-tint:#152a3a;
+      --red:#ff7a72;
+      --red-tint:#361c1c;
+      --green:#4be093;
+      --green-tint:#0f2e20;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.6);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12141c;
+    --surface:#1b1e29;
+    --surface-2:#20232f;
+    --ink:#eef1f6;
+    --ink-soft:#aab1c0;
+    --ink-faint:#7d8494;
+    --line:#2c303f;
+    --line-soft:#252836;
+    --blue:#4fb3ea;
+    --blue-deep:#8fd0f5;
+    --blue-tint:#152a3a;
+    --red:#ff7a72;
+    --red-tint:#361c1c;
+    --green:#4be093;
+    --green-tint:#0f2e20;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Roboto Flex','Roboto',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+    font-size:15.5px;
+    line-height:1.6;
+    padding:0 16px;
+  }
+  h1,h2,h3,h4,.mark{font-family:'Manrope','Segoe UI',system-ui,sans-serif;}
+  h1,h2,h3,h4{color:var(--ink); text-wrap:balance; margin:0 0 .5em;}
+  p{margin:0 0 1em;}
+  a{color:var(--blue);}
+  a:hover{color:var(--red);}
+  ::selection{background:var(--blue); color:#fff;}
+  .skip-link{position:absolute; left:-999px; top:0; background:var(--blue); color:#fff; padding:10px 16px; border-radius:0 0 8px 0; z-index:200;}
+  .skip-link:focus{left:0;}
+
+  .page{max-width:1360px; margin:0 auto;}
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:80;
+    margin:0 -16px; padding:0 16px;
+    background:var(--surface);
+    border-bottom:3px solid var(--blue);
+    box-shadow:var(--shadow);
+  }
+  .topbar__inner{
+    max-width:1360px; margin:0 auto;
+    display:flex; align-items:center; gap:16px;
+    height:64px;
+  }
+  .brand{display:flex; align-items:center; gap:12px; flex-shrink:0;}
+  .brand__logo{height:30px; width:auto; color:var(--blue); flex-shrink:0; display:block;}
+  .brand__sub{
+    font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft);
+    border-left:1px solid var(--line); padding-left:12px; line-height:1.35; max-width:130px;
+  }
+  .topbar__title{
+    font-family:'Manrope',sans-serif; font-weight:600; font-size:14.5px; color:var(--ink-soft);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;
+  }
+  .nav-toggle{
+    display:none; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:10px; border:1px solid var(--line);
+    background:var(--surface-2); color:var(--ink); font-size:18px; cursor:pointer; flex-shrink:0;
+  }
+
+  /* ---------- layout ---------- */
+  .layout{display:grid; grid-template-columns:270px minmax(0,1fr); gap:32px; align-items:start; padding-top:24px;}
+  .sidebar{
+    position:sticky; top:calc(64px + env(safe-area-inset-top,0px) + 20px);
+    max-height:calc(100vh - 64px - 40px);
+    overflow-y:auto;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m);
+    padding:14px;
+    scrollbar-width:thin;
+  }
+  .side-group{margin-bottom:14px;}
+  .side-group:last-child{margin-bottom:0;}
+  .side-group__label{
+    font-family:'Manrope',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.08em; color:var(--ink-faint); padding:4px 10px; margin-bottom:2px;
+  }
+  .side-link{
+    display:block; padding:7px 10px; border-radius:8px; font-size:13.5px; color:var(--ink-soft);
+    text-decoration:none; border-left:2px solid transparent;
+  }
+  .side-link:hover{background:var(--surface-2); color:var(--ink);}
+  .side-link.active{background:var(--blue-tint); color:var(--blue-deep); font-weight:600; border-left-color:var(--blue);}
+  .side-link.sub{padding-left:20px; font-size:12.5px;}
+  .scrim{display:none;}
+
+  .content{min-width:0;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    background:linear-gradient(135deg,var(--blue) 0%,var(--blue-deep) 100%);
+    border-radius:var(--radius-l);
+    padding:40px clamp(20px,4vw,48px);
+    color:#fff;
+    position:relative; overflow:hidden;
+    margin-bottom:28px;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-60px; top:-60px; width:260px; height:260px;
+    border-radius:50%; background:rgba(255,255,255,.08);
+  }
+  .hero::before{
+    content:""; position:absolute; right:60px; bottom:-90px; width:180px; height:180px;
+    border-radius:50%; background:rgba(238,42,36,.35);
+  }
+  .hero__eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Manrope',sans-serif; font-size:12px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.09em; background:rgba(255,255,255,.16); padding:6px 12px; border-radius:999px;
+    margin-bottom:16px; position:relative; z-index:1;
+  }
+  .hero h1{color:#fff; font-size:clamp(26px,4vw,40px); font-weight:800; max-width:720px; position:relative; z-index:1;}
+  .hero p{color:rgba(255,255,255,.88); max-width:640px; font-size:16px; position:relative; z-index:1;}
+  .hero__meta{display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; position:relative; z-index:1;}
+  .hero__chip{
+    font-size:12.5px; font-family:'Manrope',sans-serif; font-weight:600; background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.25); padding:7px 12px; border-radius:999px; color:#fff;
+  }
+
+  /* ---------- pathways ---------- */
+  .pathways{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-bottom:36px;}
+  .path-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m);
+    padding:22px; display:flex; flex-direction:column; gap:10px; text-decoration:none; color:var(--ink);
+    box-shadow:var(--shadow); transition:transform .15s ease, border-color .15s ease;
+  }
+  .path-card:hover{transform:translateY(-2px); border-color:var(--blue);}
+  .path-card__icon{
+    width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+  }
+  .path-card--blue .path-card__icon{background:var(--blue-tint); color:var(--blue-deep);}
+  .path-card--red .path-card__icon{background:var(--red-tint); color:var(--red);}
+  .path-card--green .path-card__icon{background:var(--green-tint); color:var(--green);}
+  .path-card h3{font-size:17px; margin-bottom:2px;}
+  .path-card p{font-size:13.5px; color:var(--ink-soft); margin-bottom:0;}
+  .path-card__cta{font-family:'Manrope',sans-serif; font-size:13px; font-weight:700; color:var(--blue); margin-top:4px;}
+
+  /* ---------- sections ---------- */
+  .section{scroll-margin-top:96px; margin-bottom:44px;}
+  .section-head{display:flex; align-items:baseline; gap:14px; margin-bottom:18px; flex-wrap:wrap;}
+  .section-num{
+    font-family:'Manrope',sans-serif; font-weight:800; font-size:13px; color:var(--blue);
+    background:var(--blue-tint); border-radius:8px; padding:4px 10px; flex-shrink:0;
+  }
+  .section-head h2{font-size:clamp(21px,3vw,27px); margin:0;}
+  .section-intro{color:var(--ink-soft); max-width:800px; margin-bottom:20px;}
+  .sub-head{font-size:16.5px; font-weight:700; margin:26px 0 10px; color:var(--ink); display:flex; align-items:center; gap:8px;}
+  .sub-head .tag{font-family:'Manrope',sans-serif; font-size:11px; font-weight:700; color:var(--ink-faint); background:var(--surface-2); border:1px solid var(--line); padding:2px 7px; border-radius:6px;}
+
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m);
+    padding:22px clamp(16px,3vw,26px); box-shadow:var(--shadow);
+  }
+
+  /* ---------- tables ---------- */
+  .table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius-m); background:var(--surface); box-shadow:var(--shadow);}
+  table{border-collapse:collapse; width:100%; min-width:520px; font-size:13.8px;}
+  thead th{
+    text-align:left; font-family:'Manrope',sans-serif; font-weight:700; font-size:11.5px; text-transform:uppercase;
+    letter-spacing:.05em; color:var(--ink-soft); background:var(--surface-2); padding:12px 16px; border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  tbody td{padding:13px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover td{background:var(--surface-2);}
+  td.num{color:var(--ink-faint); font-variant-numeric:tabular-nums; width:36px;}
+  td strong{color:var(--ink);}
+
+  /* ---------- convention rights ---------- */
+  .right-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px;}
+  .right-card{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:var(--radius-s); padding:16px 18px; box-shadow:var(--shadow);}
+  .right-card h4{font-size:14.5px; margin-bottom:6px; color:var(--blue-deep);}
+  .right-card p{font-size:13.3px; color:var(--ink-soft); margin:0;}
+
+  /* ---------- steps / algorithm ---------- */
+  .steps{list-style:none; margin:0; padding:0; counter-reset:step;}
+  .steps li{
+    counter-increment:step; position:relative; padding:0 0 26px 46px; border-left:2px solid var(--line);
+    margin-left:16px;
+  }
+  .steps li:last-child{border-left-color:transparent; padding-bottom:2px;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:-17px; top:0; width:34px; height:34px; border-radius:50%;
+    background:var(--blue); color:#fff; font-family:'Manrope',sans-serif; font-weight:800; font-size:14px;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 4px var(--surface);
+  }
+  .steps h4{font-size:15px; margin:0 0 4px;}
+  .steps p{font-size:13.6px; color:var(--ink-soft); margin:0;}
+
+  /* ---------- accordion (details) ---------- */
+  details.acc{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-s);
+    margin-bottom:10px; overflow:hidden;
+  }
+  details.acc summary{
+    list-style:none; cursor:pointer; padding:14px 18px; display:flex; align-items:center; justify-content:space-between;
+    gap:12px; font-family:'Manrope',sans-serif; font-weight:700; font-size:14.5px; color:var(--ink);
+  }
+  details.acc summary::-webkit-details-marker{display:none;}
+  details.acc summary::after{
+    content:"+"; font-size:20px; color:var(--blue); flex-shrink:0; font-weight:400; transition:transform .15s ease;
+  }
+  details.acc[open] summary::after{transform:rotate(45deg);}
+  details.acc[open] summary{border-bottom:1px solid var(--line);}
+  details.acc .acc-body{padding:16px 18px 18px; font-size:13.8px; color:var(--ink-soft);}
+  details.acc .acc-body p{margin-bottom:.7em;}
+  details.acc .acc-body ul{margin:0 0 .7em; padding-left:20px;}
+  details.acc .acc-body li{margin-bottom:.35em;}
+
+  /* nosology cards */
+  .noso-grid{display:grid; gap:10px;}
+  .noso{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-s); padding:16px 18px;}
+  .noso summary{list-style:none; cursor:pointer; display:flex; gap:12px; align-items:center; font-family:'Manrope',sans-serif; font-weight:700;}
+  .noso summary::-webkit-details-marker{display:none;}
+  .noso__badge{width:30px; height:30px; border-radius:9px; background:var(--blue-tint); color:var(--blue-deep); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;}
+  .noso summary::after{content:"↓"; margin-left:auto; color:var(--ink-faint); transition:transform .15s;}
+  .noso[open] summary::after{transform:rotate(180deg);}
+  .noso p{margin:14px 0 0; padding-left:42px; font-size:13.6px; color:var(--ink-soft);}
+
+  /* pill list */
+  .pill-row{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 1em;}
+  .pill{
+    font-family:'Manrope',sans-serif; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:999px;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--ink-soft);
+  }
+  .pill.on{background:var(--green-tint); color:var(--green); border-color:transparent;}
+
+  /* checklist (interactive) */
+  .checklist{list-style:none; margin:0; padding:0; display:grid; gap:8px;}
+  .checklist li{
+    display:flex; align-items:flex-start; gap:10px; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius-s); padding:12px 14px; font-size:13.8px;
+  }
+  .checklist input{margin-top:3px; width:17px; height:17px; accent-color:var(--blue); flex-shrink:0; cursor:pointer;}
+  .checklist label{cursor:pointer; flex:1;}
+  .checklist li.checked{background:var(--green-tint); border-color:transparent;}
+  .checklist li.checked label{color:var(--ink-soft); text-decoration:line-through; text-decoration-color:var(--green);}
+  .checklist-progress{font-family:'Manrope',sans-serif; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:10px;}
+
+  /* org / portal directory */
+  .dir-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:12px;}
+  .dir-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-s); padding:16px 18px; display:flex; flex-direction:column; gap:6px;}
+  .dir-card h4{font-size:14px; margin:0; color:var(--ink);}
+  .dir-card p{font-size:12.8px; color:var(--ink-soft); margin:0;}
+  .dir-card a{font-size:12.8px; font-family:'Manrope',sans-serif; font-weight:700; margin-top:4px;}
+
+  /* callout */
+  .callout{
+    display:flex; gap:12px; padding:16px 18px; border-radius:var(--radius-s); font-size:13.8px; margin:18px 0;
+    border:1px solid; align-items:flex-start;
+  }
+  .callout__icon{font-size:16px; flex-shrink:0; line-height:1.4;}
+  .callout--info{background:var(--blue-tint); border-color:transparent; color:var(--ink);}
+  .callout--warn{background:var(--red-tint); border-color:transparent; color:var(--ink);}
+  .callout--ok{background:var(--green-tint); border-color:transparent; color:var(--ink);}
+  .callout b{color:var(--ink);}
+
+  /* glossary */
+  .gloss-tools{display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-bottom:18px;}
+  .gloss-search{
+    flex:1; min-width:220px; position:relative;
+  }
+  .gloss-search input{
+    width:100%; padding:11px 14px 11px 38px; border-radius:10px; border:1px solid var(--line);
+    background:var(--surface); color:var(--ink); font-size:14px; font-family:inherit;
+  }
+  .gloss-search input:focus{outline:2px solid var(--blue); outline-offset:1px;}
+  .gloss-search::before{content:"🔍"; position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:13px; opacity:.6;}
+  .letter-nav{display:flex; flex-wrap:wrap; gap:5px;}
+  .letter-nav button{
+    width:28px; height:28px; border-radius:7px; border:1px solid var(--line); background:var(--surface);
+    color:var(--ink-soft); font-family:'Manrope',sans-serif; font-weight:700; font-size:12.5px; cursor:pointer;
+  }
+  .letter-nav button:hover, .letter-nav button.active{background:var(--blue); color:#fff; border-color:var(--blue);}
+  .gloss-count{font-size:12.5px; color:var(--ink-faint); font-family:'Manrope',sans-serif;}
+  .gloss-list{display:grid; gap:10px;}
+  .gloss-letter-label{
+    font-family:'Manrope',sans-serif; font-weight:800; font-size:13px; color:var(--blue); margin:18px 0 4px;
+    padding-bottom:4px; border-bottom:2px solid var(--blue-tint);
+  }
+  .gloss-letter-label:first-child{margin-top:0;}
+  .term-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-s); padding:14px 16px;}
+  .term-card dt{font-family:'Manrope',sans-serif; font-weight:700; font-size:14px; margin-bottom:4px; color:var(--ink);}
+  .term-card dd{margin:0; font-size:13.4px; color:var(--ink-soft);}
+  .gloss-empty{display:none; text-align:center; color:var(--ink-faint); padding:30px; font-size:13.5px;}
+
+  /* stepper (guides) */
+  .stepper{display:grid; gap:14px;}
+  .stage{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m); padding:18px 20px;
+    display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:flex-start;
+  }
+  .stage__num{
+    width:38px; height:38px; border-radius:50%; background:var(--ink); color:#fff; font-family:'Manrope',sans-serif;
+    font-weight:800; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0;
+  }
+  .stage--blue .stage__num{background:var(--blue);}
+  .stage--red .stage__num{background:var(--red);}
+  .stage h4{font-size:15px; margin-bottom:4px;}
+  .stage p{font-size:13.6px; color:var(--ink-soft); margin:0;}
+  .stage .ref{font-size:11.5px; color:var(--ink-faint); font-family:'Manrope',sans-serif; margin-top:6px;}
+  .stage-group-title{font-family:'Manrope',sans-serif; font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-faint); margin:22px 0 10px;}
+  .stage-group-title:first-child{margin-top:0;}
+
+  /* footer */
+  .site-footer{
+    border-top:1px solid var(--line); margin-top:40px; padding:28px 4px 40px;
+    display:flex; flex-wrap:wrap; gap:20px; justify-content:space-between; align-items:flex-start;
+    color:var(--ink-soft); font-size:12.8px;
+  }
+  .site-footer strong{color:var(--ink);}
+  .back-to-top{
+    font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; color:var(--blue); text-decoration:none;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+
+  /* mobile */
+  @media (max-width:960px){
+    .layout{grid-template-columns:1fr; gap:0; padding-top:16px;}
+    .nav-toggle{display:flex;}
+    .brand__sub{display:none;}
+    .topbar__title{display:none;}
+    .sidebar{
+      position:fixed; top:0; bottom:0; left:0; width:300px; max-width:82vw; max-height:none;
+      z-index:120; border-radius:0; transform:translateX(-100%); transition:transform .2s ease;
+      padding-top:calc(20px + env(safe-area-inset-top,0px));
+    }
+    .sidebar.open{transform:translateX(0); box-shadow:0 0 0 100vmax rgba(0,0,0,0);}
+    .scrim{display:none; position:fixed; inset:0; background:rgba(15,17,23,.45); z-index:110;}
+    .scrim.show{display:block;}
+    .stage{grid-template-columns:auto 1fr;}
+  }
+  @media (max-width:600px){
+    body{font-size:14.5px;}
+    .hero{padding:28px 18px;}
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Roboto+Flex:opsz,wght@8..144,400..600&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<a class="skip-link" href="#main">Перейти к содержанию</a>
+
+<div class="page">
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="brand">
+        <svg class="brand__logo" viewBox="0 0 190 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="РУДН — Российский университет дружбы народов">
+<g clip-path="url(#clip0_5996_370)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M29.4038 39.6665C33.8065 39.2392 37.5222 35.4123 39.1157 30.1212C39.178 29.9146 39.0353 29.6999 38.8144 29.6667C35.8236 29.2149 32.6349 28.9593 29.3645 28.9239C29.1563 28.9214 28.9855 29.0843 28.9855 29.2846V39.3097C28.9855 39.525 29.181 39.6881 29.4038 39.6665Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M33.4777 9.45796C36.4706 11.2795 38.8241 14.7834 39.925 19.1163C39.9638 19.2693 40.1124 19.3673 40.2653 19.3382C44.5715 18.5226 48.3814 17.2511 51.2977 15.6145C51.4833 15.5104 51.5024 15.2426 51.333 15.1126C50.4675 14.4478 49.505 13.8171 48.4495 13.2265C46.9413 12.383 45.2909 11.6492 43.5303 11.0303V8.66111C43.5303 8.64712 43.527 8.63408 43.5263 8.62044V7.59954C43.5263 6.23071 44.6212 5.11683 45.9675 5.11683H47.8777C47.8877 5.11683 47.8968 5.11436 47.9063 5.11389C47.9162 5.11436 47.9254 5.11683 47.9353 5.11683C48.3108 5.11683 48.6151 4.80744 48.6151 4.42542V0.691295C48.6151 0.309384 48.3108 0 47.9353 0H34.7445C34.3689 0 34.0642 0.309384 34.0642 0.691295V4.42542C34.0642 4.80744 34.3689 5.11683 34.7445 5.11683C34.764 5.11683 34.7819 5.11295 34.8009 5.11107C34.8197 5.11295 34.838 5.11683 34.8575 5.11683H36.7681C38.1139 5.11683 39.2089 6.23071 39.2089 7.59954V8.6557C39.2089 8.65747 39.2085 8.65923 39.2085 8.66111V9.79544C37.4249 9.39155 35.5676 9.09039 33.6574 8.90161C33.3443 8.8707 33.2077 9.29387 33.4777 9.45796ZM42.1664 7.59954V8.88574C42.1664 8.89938 42.1695 8.91231 42.1702 8.92595V10.5842C42.0202 10.5379 41.8709 10.4912 41.7196 10.4463V7.14287C41.8511 5.85209 42.7184 4.78299 43.8853 4.36946C42.8516 5.06123 42.1664 6.24975 42.1664 7.59954ZM47.2551 1.38271V3.63033H44.9499C43.3598 3.63033 41.9973 4.63183 41.4347 6.04627C40.8721 4.63183 39.5098 3.63033 37.9198 3.63033H35.4244V1.38271H47.2551ZM40.5682 8.89115C40.5682 8.88939 40.5689 8.88751 40.5689 8.88574V7.59954C40.5689 6.19485 39.8255 4.96613 38.7203 4.28941C40.0929 4.64511 41.117 5.889 41.1629 7.38314C41.1618 7.41793 41.1575 7.45202 41.1575 7.48681V10.2869C40.9616 10.2322 40.7662 10.1774 40.5682 10.1257V8.89115Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M29.2501 20.0584C32.68 20.025 36.0199 19.7328 39.1304 19.2132C37.6623 13.2022 33.6914 8.82963 28.9855 8.5957V19.7947C28.9855 19.9408 29.1048 20.0598 29.2501 20.0584Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M51.2296 33.5084C48.2538 31.9361 44.3987 30.717 40.0575 29.9357C39.9404 29.9145 39.8265 29.9858 39.7949 30.0984C38.607 34.3389 36.1466 37.7351 33.0488 39.4368C32.8304 39.5565 32.9306 39.8828 33.1795 39.8605C34.7576 39.7201 36.3005 39.5057 37.7987 39.2253C36.3984 41.2022 34.1113 42.3942 31.6109 42.3942H31.1402C28.4462 42.3942 26.0785 40.9977 24.7437 38.9037C25.6881 39.3739 26.6899 39.678 27.7324 39.7801C27.9453 39.8009 28.1286 39.6292 28.1286 39.4188V29.3118C28.1286 29.1098 27.9598 28.9457 27.7543 28.9482C26.3497 28.9636 24.9614 29.0247 23.5955 29.1229V28.3321C24.9653 28.2342 26.3573 28.1745 27.7646 28.159C27.9659 28.157 28.1286 27.997 28.1286 27.7989V21.277C28.1286 21.0793 27.9659 20.9193 27.7646 20.9172C26.3573 20.9017 24.9653 20.8419 23.5955 20.7445V19.953C24.9847 20.0529 26.3971 20.1143 27.8265 20.1287C27.9925 20.1302 28.1286 19.9977 28.1286 19.8349V8.86679C26.5057 8.94703 24.9725 9.51122 23.5955 10.4483V9.49214C23.8155 9.35653 24.0385 9.22797 24.2652 9.11039C24.4311 9.02426 24.3532 8.77569 24.166 8.79165C23.9746 8.80748 23.786 8.8291 23.5955 8.84702V8.83477L23.596 8.82945V7.56465C23.596 6.21811 24.7106 5.12292 26.0802 5.12292H28.0248C28.032 5.12292 28.0384 5.12072 28.046 5.12072C28.0532 5.12072 28.0596 5.12292 28.0672 5.12292C28.4493 5.12292 28.759 4.81816 28.759 4.44254V0.769876C28.759 0.394136 28.4493 0.0898438 28.0672 0.0898438H8.03418C7.65202 0.0898438 7.34243 0.394136 7.34243 0.769876V4.44254C7.34243 4.81816 7.65202 5.12292 8.03418 5.12292C8.03677 5.12292 8.03924 5.12211 8.04183 5.12211C8.0443 5.12211 8.04677 5.12292 8.04936 5.12292H9.99347C11.3634 5.12292 12.4778 6.21811 12.4778 7.56465V8.5314C12.4778 8.53568 12.4764 8.53984 12.4764 8.54447V11.3122C11.074 11.8369 9.74598 12.4325 8.51268 13.0991C7.47099 13.6623 6.51835 14.2628 5.65839 14.8948C5.4436 15.0526 5.47477 15.3761 5.7105 15.5021C7.62649 16.5284 9.92089 17.4037 12.4764 18.1109V18.928C9.42298 18.1001 6.7216 17.0365 4.55989 15.7687L4.55589 15.7652C1.5902 18.2842 -9.15527e-05 21.2352 -9.15527e-05 24.3382C-9.15527e-05 27.4711 1.62078 30.4494 4.64281 32.9852C4.75997 33.0837 4.92805 33.0988 5.06238 33.0244C7.13482 31.8807 9.65471 30.9134 12.4764 30.1476V30.9635C10.0631 31.6308 7.88303 32.4485 6.03479 33.4014C5.78919 33.5282 5.76613 33.8612 5.99138 34.0204C6.76254 34.5648 7.6032 35.0853 8.51268 35.5771C10.0099 36.3864 11.6455 37.0921 13.388 37.6909C13.4693 37.7188 13.5508 37.715 13.624 37.6906C15.9946 43.5088 21.7859 47.6313 28.542 47.6313H28.921C35.1086 47.6313 40.6508 43.7811 42.7129 38.0503C42.7183 38.0351 42.72 38.0196 42.7243 38.0041C44.8255 37.3432 46.7853 36.5324 48.5523 35.5771C49.5345 35.0461 50.4361 34.4819 51.2565 33.8897C51.3919 33.7919 51.3776 33.5865 51.2296 33.5084ZM22.2119 7.56465V8.5388C22.2119 8.541 22.2116 8.54239 22.2116 8.54447V34.9782C22.2116 39.8174 26.2172 43.7542 31.1402 43.7542H31.6109C34.9933 43.7542 38.0459 41.9116 39.5779 38.945C39.5944 38.9135 39.6053 38.8808 39.6164 38.848C39.7295 38.8217 39.8413 38.7942 39.9541 38.7674C38.0839 42.613 34.172 45.0609 29.7843 45.0609H29.5507C23.3323 45.0609 18.2726 40.0883 18.2726 33.9762V10.462V8.55753V8.53707C18.2726 8.50354 18.2684 8.47105 18.2677 8.43741C18.3223 6.09487 20.2743 4.20449 22.6706 4.20449H24.2749C23.0496 4.84325 22.2119 6.10897 22.2119 7.56465ZM27.3749 1.45014V3.66042H22.6706C20.5074 3.66042 18.6682 5.03031 17.991 6.93167C17.3136 5.03031 15.4743 3.66042 13.3116 3.66042H8.72641V1.45014H27.3749ZM28.921 46.2709H28.542C20.4467 46.2709 13.8604 39.7973 13.8604 31.8405V8.84286C13.8604 8.83824 13.8618 8.83396 13.8618 8.82945V7.56465C13.8618 6.10897 13.0246 4.84325 11.7989 4.20449H13.3116C15.7078 4.20449 17.6596 6.09487 17.714 8.43741C17.7134 8.47105 17.7091 8.50354 17.7091 8.53707V10.462C17.7091 10.4797 17.7159 10.4952 17.7191 10.5117V33.9762C17.7191 40.3884 23.0269 45.605 29.5507 45.605H29.7843C34.5399 45.605 38.7646 42.8655 40.6427 38.5979C40.7781 38.5633 40.9124 38.5269 41.0469 38.491C38.9497 43.1815 34.1944 46.2709 28.921 46.2709Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M52.5165 15.888C52.3531 15.7408 52.1129 15.7193 51.9222 15.8289C48.9447 17.5391 45.0083 18.869 40.5459 19.7233C40.2696 19.7763 40.0899 20.0402 40.1398 20.3171C40.3661 21.5728 40.4884 22.8839 40.4884 24.2344C40.4884 25.7204 40.3428 27.1603 40.0715 28.5295C40.0159 28.8093 40.196 29.0795 40.4765 29.1327C44.8338 29.961 48.6924 31.2428 51.6516 32.8882C51.8385 32.9923 52.0704 32.9717 52.2324 32.832C55.1594 30.3062 56.7281 27.3464 56.7281 24.2344C56.7281 21.2248 55.2601 18.358 52.5165 15.888Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M29.3512 28.0173C32.6852 28.0524 35.9381 28.3145 38.9881 28.778C39.1823 28.8077 39.3674 28.6886 39.4076 28.5049C39.6984 27.1681 39.855 25.7558 39.855 24.2951C39.855 22.9734 39.7248 21.6922 39.4847 20.4697C39.448 20.2827 39.2603 20.1599 39.0628 20.1901C35.9916 20.661 32.7126 20.9272 29.3512 20.9627C29.1487 20.9647 28.9855 21.1205 28.9855 21.3132V27.6665C28.9855 27.8594 29.1487 28.0151 29.3512 28.0173Z" fill="currentColor"></path>
+</g>
+<g clip-path="url(#clip1_5996_370)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M82.6306 36.8845V26.2356C82.5305 26.1688 82.456 26.1268 82.4048 26.1094L78.2354 26.662V27.7422L79.9688 28.1938V35.8048C79.4186 36.1399 78.8524 36.3986 78.2688 36.5833C77.6856 36.767 77.2021 36.8589 76.8187 36.8589C76.0871 36.8589 75.5693 36.6631 75.2695 36.2695C74.9693 35.8754 74.8198 35.2773 74.8198 34.4732C74.8198 33.0841 74.816 31.7066 74.8073 30.3416C74.7986 28.9771 74.7947 27.6083 74.7947 26.2356L74.5665 26.135L70.3995 26.6872V27.7422C70.6838 27.8259 70.9686 27.9056 71.2539 27.9815C71.5382 28.056 71.822 28.1353 72.1073 28.219V35.5529C72.1073 36.826 72.4129 37.7138 73.0241 38.2157C73.6352 38.7185 74.4925 38.9695 75.5983 38.9695C75.9667 38.9695 76.3811 38.9443 76.8414 38.8931C77.3017 38.8437 77.7335 38.7683 78.1348 38.6677C78.7209 38.1485 79.3325 37.5871 79.9688 36.9846C79.9853 37.0016 80.0017 37.0103 80.0191 37.0103L80.5964 38.8437L80.7976 38.9187L84.5646 38.4168V37.3366C84.23 37.2535 83.9037 37.1775 83.586 37.1108C83.2669 37.0436 82.9492 36.9692 82.6306 36.8845Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M98.6542 29.5515C98.6542 28.3297 98.3612 27.4502 97.7723 26.9149C97.1853 26.3787 96.3275 26.1113 95.2024 26.1113C94.8161 26.1113 94.392 26.1355 93.9298 26.1863C93.4675 26.2366 93.0271 26.3115 92.6069 26.4126L90.7927 28.1203C90.7763 28.1203 90.7676 28.1155 90.7676 28.1078C90.7676 28.0995 90.7598 28.0942 90.7429 28.0942L90.1646 26.2612L89.9393 26.1602C89.3528 26.2612 88.7629 26.3541 88.1682 26.4372C87.5744 26.5213 86.9831 26.6132 86.3976 26.7133V27.7683L88.1305 28.2209V36.9353L86.2216 37.6142L86.2723 38.6682H92.5764L92.6016 37.5634L90.7927 37.0359C90.7763 35.463 90.7676 34.0555 90.7676 32.8167V29.3253C91.3372 29.0081 91.8898 28.76 92.4256 28.5845C92.9613 28.4095 93.4637 28.3215 93.9317 28.3215C94.702 28.3215 95.23 28.5096 95.5152 28.8857C95.7995 29.2624 95.9422 29.8528 95.9422 30.6564V36.9605L94.1329 37.5886L94.1585 38.6682H100.362L100.413 37.5634L98.6542 37.0359V29.5515Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M104.218 21.3144C103.874 21.649 103.703 22.06 103.703 22.5445C103.703 23.0314 103.861 23.4448 104.18 23.7885C104.498 24.1314 104.924 24.304 105.46 24.304C105.98 24.304 106.406 24.1314 106.742 23.7885C107.076 23.4448 107.244 23.0314 107.244 22.5445C107.244 22.06 107.076 21.649 106.742 21.3144C106.406 20.9798 105.98 20.8125 105.46 20.8125C104.975 20.8125 104.56 20.9798 104.218 21.3144Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M106.88 31.5987C106.871 29.7981 106.868 27.9854 106.868 26.1606L106.641 26.0605L102.498 26.6881V27.7427C102.777 27.8268 103.062 27.9066 103.351 27.9816C103.64 28.0575 103.924 28.1363 104.205 28.2204V36.9107L102.246 37.6388C102.246 37.8231 102.249 37.9947 102.259 38.1538C102.266 38.3133 102.279 38.4845 102.296 38.6687H108.826C108.826 38.4845 108.83 38.3133 108.839 38.1538C108.847 37.9947 108.852 37.8231 108.852 37.6388L106.918 37.0359C106.9 35.2111 106.888 33.3984 106.88 31.5987Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M121.543 26.2869C121.099 26.3038 120.627 26.3197 120.124 26.3371C119.621 26.3536 119.149 26.371 118.705 26.3869C118.261 26.4044 117.965 26.4121 117.813 26.4121V27.5426L119.371 28.0449C119.32 28.145 119.229 28.38 119.095 28.748C118.96 29.1164 118.801 29.5603 118.618 30.0791C118.433 30.5984 118.237 31.1549 118.028 31.7491C117.818 32.3434 117.621 32.9004 117.438 33.4197C117.253 33.9385 117.094 34.3867 116.96 34.7639C116.826 35.14 116.741 35.3707 116.708 35.4539H116.582L114.198 29.0995C114.013 28.6314 113.857 28.1411 113.733 27.6301C113.606 27.1204 113.527 26.663 113.494 26.2617L109.249 26.4377V27.5672L110.555 28.0198C110.639 28.204 110.801 28.5763 111.044 29.1377C111.287 29.6986 111.567 30.3557 111.886 31.109C112.204 31.8628 112.543 32.6707 112.903 33.5324C113.264 34.3945 113.602 35.2024 113.92 35.9562C114.239 36.71 114.52 37.3715 114.762 37.9401C115.005 38.5092 115.168 38.8781 115.251 39.0459L116.834 38.719L120.124 31.0838C120.476 30.2797 120.835 29.5637 121.205 28.936C121.572 28.3089 122.024 27.7853 122.561 27.3661L122.435 26.2617C122.284 26.2617 121.987 26.2704 121.543 26.2869Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M133.29 27.9803C132.904 27.4359 132.373 26.992 131.694 26.6492C131.017 26.3059 130.124 26.1348 129.02 26.1348C127.831 26.1348 126.851 26.3272 126.082 26.7121C125.311 27.0979 124.699 27.6003 124.248 28.2192C123.795 28.8391 123.478 29.5378 123.293 30.3162C123.108 31.0947 123.017 31.8857 123.017 32.6898C123.017 33.6781 123.126 34.5605 123.343 35.34C123.561 36.1184 123.905 36.7799 124.373 37.3238C124.842 37.8673 125.454 38.2826 126.207 38.5669C126.96 38.8517 127.864 38.9939 128.919 38.9939C129.824 38.9939 130.703 38.8595 131.557 38.5926C132.411 38.3247 133.155 37.9722 133.791 37.538L133.315 36.2069C132.627 36.4917 131.97 36.688 131.344 36.7958C130.716 36.9051 130.209 36.9597 129.824 36.9597C129.087 36.9597 128.471 36.863 127.977 36.6711C127.483 36.4782 127.082 36.1895 126.773 35.8041C126.462 35.4197 126.24 34.942 126.107 34.3729C125.972 33.8038 125.906 33.1419 125.906 32.3886L134.067 31.9616L134.294 31.6846C134.277 31.0662 134.202 30.4294 134.067 29.7771C133.933 29.1234 133.675 28.5248 133.29 27.9803ZM125.956 31.2088C125.956 30.8563 125.997 30.4845 126.082 30.0904C126.165 29.6973 126.311 29.3284 126.521 28.9851C126.73 28.6428 127.014 28.3575 127.375 28.1312C127.735 27.9059 128.2 27.7923 128.769 27.7923C129.27 27.7923 129.674 27.8803 129.974 28.0563C130.276 28.2318 130.51 28.4576 130.677 28.7342C130.845 29.0102 130.957 29.3202 131.017 29.6635C131.075 30.0063 131.104 30.3457 131.104 30.6808L125.956 31.2088Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M145.388 25.9102C144.969 25.9102 144.564 25.9778 144.17 26.1113C143.776 26.2457 143.404 26.4125 143.052 26.6142C142.701 26.8143 142.37 27.0401 142.06 27.292C141.75 27.543 141.47 27.7857 141.219 28.0202L141.168 27.9951L140.742 26.237L140.515 26.1113L136.798 26.6891V27.7441L138.531 28.1967V36.9111L136.547 37.6146L136.597 38.6692H143.128L143.153 37.6146L141.193 37.0368V28.9244L145.313 29.2261C145.58 28.891 145.785 28.5057 145.928 28.07C146.069 27.6349 146.141 27.2161 146.141 26.8143C146.141 26.4797 146.066 26.2457 145.916 26.1113C145.765 25.9778 145.589 25.9102 145.388 25.9102Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M155.78 32.8155C155.453 32.5143 155.06 32.2459 154.6 32.0114C154.138 31.7779 153.607 31.5347 153.005 31.2832C152.519 31.0826 152.096 30.9071 151.736 30.7562C151.376 30.6058 151.079 30.4545 150.845 30.3041C150.61 30.1533 150.438 29.9894 150.33 29.8134C150.22 29.6388 150.167 29.4338 150.167 29.1993C150.167 28.7298 150.333 28.3788 150.669 28.1443C151.003 27.9098 151.438 27.7923 151.975 27.7923C152.209 27.7923 152.523 27.8295 152.917 27.9059C153.31 27.9803 153.699 28.1351 154.085 28.3701L155.014 30.4047L155.968 30.3041C155.968 29.7515 155.972 29.2027 155.981 28.6582C155.989 28.1148 155.993 27.5669 155.993 27.0133C155.357 26.6792 154.675 26.4486 153.946 26.3233C153.218 26.1971 152.56 26.1348 151.975 26.1348C151.121 26.1348 150.401 26.231 149.815 26.4234C149.228 26.6163 148.756 26.8716 148.396 27.1893C148.035 27.508 147.771 27.8759 147.605 28.2946C147.437 28.7134 147.353 29.1485 147.353 29.6011C147.353 30.1533 147.466 30.6174 147.693 30.9946C147.918 31.3717 148.22 31.6976 148.597 31.9747C148.973 32.2503 149.396 32.493 149.865 32.7029C150.333 32.9117 150.81 33.1264 151.297 33.3425C151.665 33.5103 152.008 33.6651 152.327 33.8082C152.644 33.9498 152.925 34.1051 153.168 34.2728C153.41 34.4392 153.599 34.6369 153.733 34.8622C153.866 35.0885 153.934 35.3612 153.934 35.6784C153.934 36.2649 153.695 36.688 153.218 36.9467C152.741 37.2068 152.133 37.3369 151.397 37.3369C151.062 37.3369 150.664 37.2822 150.204 37.173C149.743 37.0642 149.338 36.8843 148.986 36.6334L147.906 34.3976C147.771 34.4324 147.625 34.4604 147.466 34.4856C147.307 34.5107 147.161 34.5402 147.027 34.5741L147.228 38.1149C147.714 38.3996 148.333 38.6221 149.087 38.7807C149.84 38.9397 150.619 39.0195 151.422 39.0195C152.343 39.0195 153.143 38.9223 153.821 38.7304C154.499 38.5379 155.055 38.2739 155.491 37.9393C155.926 37.6043 156.248 37.2068 156.458 36.7455C156.667 36.2867 156.772 35.7877 156.772 35.2515C156.772 34.6993 156.688 34.2312 156.521 33.8454C156.353 33.46 156.106 33.1167 155.78 32.8155Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M161.811 24.3025C162.331 24.3025 162.757 24.1309 163.092 23.7876C163.427 23.4438 163.595 23.0294 163.595 22.543C163.595 22.0585 163.427 21.6485 163.092 21.3129C162.757 20.9788 162.331 20.8105 161.811 20.8105C161.326 20.8105 160.911 20.9788 160.568 21.3129C160.225 21.6485 160.053 22.0585 160.053 22.543C160.053 23.0294 160.212 23.4438 160.532 23.7876C160.849 24.1309 161.275 24.3025 161.811 24.3025Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M163.23 31.5987C163.221 29.7981 163.217 27.9854 163.217 26.1606L162.992 26.0605L158.847 26.6881V27.7427C159.128 27.8268 159.412 27.9066 159.701 27.9816C159.99 28.0575 160.275 28.1363 160.555 28.2204V36.9107L158.596 37.6388C158.596 37.8231 158.6 37.9947 158.609 38.1538C158.617 38.3133 158.629 38.4845 158.646 38.6687H165.176C165.176 38.4845 165.181 38.3133 165.189 38.1538C165.197 37.9947 165.202 37.8231 165.202 37.6388L163.268 37.0359C163.251 35.2111 163.238 33.3984 163.23 31.5987Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M174.818 36.66C174.282 36.778 173.838 36.8699 173.486 36.9357C173.135 37.0038 172.784 37.0367 172.432 37.0367C171.763 37.0367 171.297 36.8776 171.038 36.5585C170.779 36.2394 170.649 35.7776 170.649 35.1732V27.8199H174.366V26.4129H170.649V23.2488C170.615 23.2144 170.577 23.1849 170.534 23.1607C170.492 23.1351 170.455 23.1061 170.42 23.0723L169.001 23.4997L168.089 26.1619C167.753 26.2949 167.425 26.4163 167.107 26.526C166.789 26.6353 166.471 26.7557 166.153 26.8901V27.8199H167.936V35.2791C167.936 35.9319 167.987 36.4889 168.088 36.9492C168.19 37.41 168.366 37.791 168.621 38.0922C168.875 38.3935 169.216 38.6159 169.647 38.7575C170.078 38.8997 170.621 38.9703 171.276 38.9703C172.599 38.9703 173.914 38.657 175.22 38.0289C175.153 37.7978 175.086 37.5705 175.019 37.3466C174.951 37.1237 174.885 36.895 174.818 36.66Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M189.147 26.8378C189.121 26.6546 189.1 26.4689 189.084 26.2852L184.462 26.436C184.462 26.6202 184.458 26.8001 184.45 26.9761C184.442 27.1516 184.438 27.332 184.438 27.5152L185.994 28.0437C185.509 29.4169 185.027 30.7857 184.55 32.1497C184.073 33.5147 183.592 34.8922 183.106 36.2819H183.005C182.62 35.0929 182.206 33.9165 181.762 32.7522C181.318 31.5888 180.904 30.4042 180.519 29.1993C180.334 28.6631 180.193 28.1443 180.092 27.6419C179.992 27.139 179.924 26.687 179.891 26.2852L175.647 26.4612V27.5916L176.953 28.0437C177.656 29.8356 178.355 31.6183 179.05 33.3933C179.745 35.1678 180.444 36.9428 181.147 38.7178L182.051 38.8179L181.423 40.4512C181.357 40.6354 181.269 40.8356 181.16 41.0537C181.051 41.2708 180.921 41.4811 180.771 41.6813C180.62 41.8824 180.44 42.0584 180.23 42.2093C180.021 42.3601 179.783 42.4607 179.514 42.5105L177.304 41.2539C176.969 41.4052 176.701 41.6315 176.501 41.9332C176.3 42.2344 176.199 42.5434 176.199 42.8625C176.199 43.3475 176.425 43.7285 176.877 44.0051C177.329 44.2812 177.873 44.419 178.51 44.419C179.498 44.419 180.331 44.0848 181.009 43.4152C181.687 42.7441 182.252 41.8568 182.704 40.752C183.391 39.1452 184.077 37.5375 184.763 35.9303C185.45 34.3222 186.129 32.7067 186.799 31.0831C187.133 30.279 187.488 29.5595 187.866 28.9227C188.242 28.2869 188.691 27.7758 189.209 27.391C189.193 27.2067 189.172 27.0225 189.147 26.8378Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M103.367 14.0184L103.415 5.06224L105.714 4.50522L105.617 3.00391C105.617 3.00391 104.572 3.09868 103.32 3.09868C102.067 3.09868 98.8636 3.00391 98.8636 3.00391L98.7427 4.40804L100.849 5.08593V12.9537C100.849 13.5992 100.792 14.2046 100.679 14.7693C100.567 15.3345 100.37 15.8224 100.088 16.2339C99.8074 16.6454 99.4206 16.9683 98.9298 17.2019C98.4396 17.4364 97.8245 17.5529 97.0843 17.5529C96.2633 17.5529 95.6033 17.4407 95.1047 17.214C94.6067 16.9882 94.2209 16.6855 93.9472 16.3064C93.674 15.9278 93.4927 15.4878 93.4042 14.9869C93.3157 14.4869 93.2717 13.9541 93.2717 13.3889V5.08593L95.523 4.5294L95.4505 3.05226C95.4505 3.05226 94.9157 3.14703 92.8279 3.14703C90.7405 3.14703 87.5348 3.05226 87.5348 3.05226L87.4135 4.4327L89.5922 5.11059V14.382C89.5922 15.5279 89.8098 16.4679 90.2454 17.2019C90.6815 17.9368 91.2298 18.5132 91.8918 18.9329C92.5532 19.353 93.2756 19.6432 94.0584 19.8042C94.8407 19.9652 95.5791 20.0464 96.2729 20.0464C97.064 20.0464 97.8782 19.9652 98.7186 19.8042C99.5565 19.6432 100.319 19.3405 101.006 18.8966C101.691 18.4527 102.253 17.8401 102.689 17.0568C103.124 16.275 103.35 15.2615 103.367 14.0184Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M111.165 19.5861H112.304C112.448 19.5861 112.706 19.59 113.078 19.5982C113.449 19.6064 113.84 19.6142 114.252 19.6224C114.663 19.6306 115.05 19.6388 115.413 19.6466C115.777 19.6548 116.007 19.6582 116.103 19.6582C117.218 19.6582 118.186 19.5179 119.008 19.2351C119.832 18.9527 120.533 18.5814 121.115 18.1211C121.695 17.6617 122.172 17.1332 122.542 16.5351C122.913 15.9389 123.201 15.3302 123.402 14.7079C123.604 14.0876 123.745 13.4735 123.827 12.8686C123.907 12.2633 123.947 11.7106 123.947 11.2102C123.947 10.2098 123.81 9.21758 123.536 8.23266C123.261 7.2487 122.805 6.36484 122.167 5.58202C121.53 4.79921 120.679 4.16532 119.614 3.68229C118.549 3.19732 117.233 2.95508 115.668 2.95508C115.377 2.95508 115.091 2.95991 114.808 2.96717C114.526 2.97635 114.236 2.98796 113.937 3.0044C113.638 3.01987 113.308 3.03196 112.945 3.04018C112.581 3.0484 112.173 3.05275 111.722 3.05275H110.851C110.592 3.05275 110.33 3.0484 110.064 3.04018C109.797 3.03196 109.515 3.02374 109.216 3.01552C108.918 3.00826 108.559 2.99618 108.139 2.97974L107.97 4.45591L109.906 5.0371V17.6255L107.752 18.2787L107.897 19.6582C108.349 19.6427 108.757 19.6306 109.12 19.6224C109.483 19.6142 109.829 19.6064 110.16 19.5982C110.491 19.59 110.826 19.5861 111.165 19.5861ZM113.586 5.30352C113.763 5.28756 113.963 5.27596 114.188 5.26677C114.414 5.25952 114.64 5.25517 114.864 5.25517C115.572 5.25517 116.243 5.33978 116.878 5.5095C117.513 5.67873 118.071 5.98141 118.554 6.41754C119.037 6.85319 119.422 7.44985 119.711 8.208C120.002 8.96712 120.146 9.93561 120.146 11.1135C120.146 11.9364 120.065 12.7318 119.905 13.4982C119.744 14.2645 119.483 14.9424 119.121 15.5313C118.759 16.1203 118.277 16.5883 117.674 16.9355C117.071 17.2826 116.335 17.4557 115.467 17.4557C115.177 17.4557 114.861 17.4432 114.515 17.4195C114.168 17.3958 113.859 17.3513 113.586 17.2865V5.30352Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M125.103 18.2298L125.199 19.6586H132.244L132.341 18.1331L129.944 17.625L129.799 7.28835L129.896 7.26369L133.382 11.8639L139.652 20.0213L141.515 19.634C141.515 19.3598 141.524 18.8478 141.54 18.0974C141.555 17.3465 141.572 16.479 141.588 15.4946C141.604 14.5106 141.62 13.4658 141.636 12.3595C141.652 11.2546 141.673 10.2054 141.696 9.21275C141.721 8.22009 141.736 7.35314 141.745 6.61046C141.753 5.86875 141.765 5.35961 141.782 5.08594L144.275 4.50475L144.178 3.00343H137.207L137.11 4.40805L139.434 5.0371L139.652 13.9212L139.555 13.9459L136.577 9.99943L132.414 4.50475C132.268 4.31086 132.114 4.08506 131.953 3.82686C131.792 3.56914 131.639 3.27758 131.494 2.95508C131.026 2.97152 130.279 2.99134 129.254 3.016C128.229 3.03969 127.007 3.03631 125.587 3.00343L125.417 4.40805L127.911 5.10963L127.596 17.5524L125.103 18.2298Z" fill="currentColor"></path>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M70.3995 18.1626L70.4725 19.6925C70.4725 19.6925 73.055 19.575 74.4877 19.575C75.9208 19.575 78.5763 19.6925 78.5763 19.6925L78.6493 18.1626L76.2554 17.5925V12.6931C76.5707 12.7738 77.4067 12.959 78.468 12.9624L83.5169 20.5231L86.5432 19.8448L86.857 18.8047L81.6292 12.372C83.5231 11.6511 85.3407 10.1604 84.8301 6.77242C84.2059 2.63593 79.6531 2.98261 78.3819 2.98261C77.1103 2.98261 73.8634 3.5696 71.0209 2.85352L70.6123 4.42059C70.6123 4.42059 71.3675 4.77598 72.6049 5.05255V17.6375L70.3995 18.1626ZM80.9982 7.94881C80.9982 9.55264 80.0578 11.215 76.2554 10.5666V5.34363C76.3864 5.33541 76.5151 5.32912 76.649 5.31703C80.1153 4.99308 80.9982 6.33048 80.9982 7.94881Z" fill="currentColor"></path>
+</g>
+<defs>
+<clipPath id="clip0_5996_370">
+<rect width="57.1429" height="48" fill="white"></rect>
+</clipPath>
+<clipPath id="clip1_5996_370">
+<rect width="120" height="42.2857" fill="white" transform="translate(69.7148 2.28516)"></rect>
+</clipPath>
+</defs>
+</svg>
+        <span class="brand__sub">Российский университет<br>дружбы народов</span>
+      </div>
+      <div class="topbar__title">Справочник по приёму и сопровождению иностранных обучающихся с инвалидностью</div>
+      <button class="nav-toggle" id="navToggle" aria-label="Открыть оглавление" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="scrim" id="scrim"></div>
+    <nav class="sidebar" id="sidebar" aria-label="Оглавление">
+      <div class="side-group">
+        <div class="side-group__label">Начало</div>
+        <a class="side-link" href="#top">Обзор справочника</a>
+        <a class="side-link" href="#guide-applicant">Путь абитуриента</a>
+        <a class="side-link" href="#guide-staff">Путь сотрудника РУДН</a>
+      </div>
+      <div class="side-group">
+        <div class="side-group__label">Главы справочника</div>
+        <a class="side-link" href="#ch1">1. Правовой статус и МСЭ</a>
+        <a class="side-link" href="#ch2">2. Пути поступления</a>
+        <a class="side-link" href="#ch3">3. Особые условия</a>
+        <a class="side-link" href="#ch4">4. Пошаговая инструкция</a>
+        <a class="side-link" href="#ch5">5. Финансовые вопросы</a>
+        <a class="side-link" href="#ch6">6. Социальная поддержка</a>
+        <a class="side-link" href="#ch7">7. Словарь терминов</a>
+        <a class="side-link" href="#ch8">8. Реестр гарантий</a>
+      </div>
+      <div class="side-group">
+        <div class="side-group__label">Приложения</div>
+        <a class="side-link" href="#app1">1. Заявление при поступлении</a>
+        <a class="side-link" href="#app2">2. Заявление на особые условия обучения и проживания</a>
+        <a class="side-link" href="#app3">3. Алгоритм получения услуги МСЭ</a>
+        <a class="side-link" href="#app4">4. Памятка абитуриенту</a>
+        <a class="side-link" href="#app5">5. Памятка сотруднику</a>
+        <a class="side-link" href="#app6">6. Согласие на обработку ПД о здоровье</a>
+      </div>
+    </nav>
+
+    <main class="content" id="main">
+      <section id="top" class="hero">
+        <span class="hero__eyebrow">📘 Информационный справочник · инклюзивное образование</span>
+        <h1>Приём и сопровождение иностранных обучающихся с инвалидностью в РУДН</h1>
+        <p>На основе единых подходов<br>в системе высшего образования Российской Федерации<br>для получения образования и сопровождения<br>обучающихся с инвалидностью, утвержденных заместителем Министра науки и высшего образования РФ О.В. Петровой (письмо от 15.09.2026 № МН-11/4000-ОП)</p>
+        <div class="hero__meta">
+          <span class="hero__chip">Утверждён Минобрнауки России · 15.09.2026</span>
+          <span class="hero__chip">8 глав · 6 приложений</span>
+          <span class="hero__chip">Основан на 29+ НПА РФ</span>
+          <span class="hero__chip">Для РУДН им. Патриса Лумумбы</span>
+        </div>
+      </section>
+
+      <section class="pathways" aria-label="Быстрый доступ">
+        <a href="#guide-applicant" class="path-card path-card--blue">
+          <span class="path-card__icon">🎓</span>
+          <h3>Я абитуриент</h3>
+          <p>Пошаговый путь от сбора документов до зачисления и оформления особых условий.</p>
+          <span class="path-card__cta">Открыть путь →</span>
+        </a>
+        <a href="#guide-staff" class="path-card path-card--red">
+          <span class="path-card__icon">🧭</span>
+          <h3>Я сотрудник РУДН</h3>
+          <p>Чек-лист приёмной комиссии и профильных служб по сопровождению абитуриента.</p>
+          <span class="path-card__cta">Открыть чек-лист →</span>
+        </a>
+        <a href="#ch7" class="path-card path-card--green">
+          <span class="path-card__icon">📖</span>
+          <h3>Словарь терминов</h3>
+          <p>Более 50 определений: от «абитуриента» до «шрифта Брайля» — с поиском.</p>
+          <span class="path-card__cta">Искать термин →</span>
+        </a>
+      </section>
+
+      <!-- ================= GUIDE: APPLICANT ================= -->
+      <section id="guide-applicant" class="section">
+        <div class="section-head"><h2>Путь абитуриента с инвалидностью</h2></div>
+        <p class="section-intro">Пошаговый маршрут для иностранного обучающегося с инвалидностью, поступающего в РУДН — от сбора документов до получения мер поддержки после зачисления.</p>
+
+        <div class="stage-group-title">I. До поступления</div>
+        <div class="stepper">
+          <div class="stage stage--blue"><div class="stage__num">1</div><div><h4>Сбор документов</h4><p>Перевести на русский язык и нотариально заверить: паспорт, документ об образовании, медицинские документы. Уточнить необходимость апостиля или консульской легализации.</p></div></div>
+          <div class="stage stage--blue"><div class="stage__num">2</div><div><h4>Выбор траектории поступления</h4><p>Квота Правительства РФ, олимпиада «Open Doors» или платное (контрактное) обучение — см. Главу 2.</p></div></div>
+        </div>
+
+        <div class="stage-group-title">II. При поступлении</div>
+        <div class="stepper">
+          <div class="stage stage--blue"><div class="stage__num">3</div><div><h4>Заявление о предоставлении специальных условий</h4><p>Подать заявление (<a href="#app1">Приложение 1</a>) вместе с документами. Без заявления особые условия не предоставляются — принцип носит заявительный характер.</p></div></div>
+          <div class="stage stage--blue"><div class="stage__num">4</div><div><h4>Подтверждение статуса</h4><p>При наличии российской справки МСЭ — приложить копию либо сведения, в том числе полученные в электронной форме. При отсутствии — иностранные медицинские документы с нотариально заверенным переводом; вуз обязан их рассмотреть для создания условий.</p></div></div>
+          <div class="stage stage--blue"><div class="stage__num">5</div><div><h4>Вступительные испытания</h4><p>Предоставляются: увеличение времени (до +1,5 часа), отдельная аудитория, ассистент, специальное оборудование — по категории нозологии</p></div></div>
+        </div>
+
+        <div class="stage-group-title">III. После зачисления</div>
+        <div class="stepper">
+          <div class="stage stage--red"><div class="stage__num">6</div><div><h4>Обращение за медицинской помощью и направлением на МСЭ</h4><p>Иностранные граждане с РВП или ВНЖ имеют право на ОМС (ст. 10 ФЗ № 326-ФЗ). Временно пребывающие могут оформить ДМС или договор о платных медицинских услугах. Срок оформления направления на МСЭ — не более 30 рабочих дней (для отдельных случаев — 3 или 1 рабочий день).</p></div></div>
+          <div class="stage stage--red"><div class="stage__num">7</div><div><h4>Заявление на специальные условия при обучении и проживании в общежитии</h4><p>Подать заявление (<a href="#app2">Приложение 2</a>) о предоставлении специальных условий в учебном процессе и общежитии на период прохождения освидетельствования в бюро МСЭ.</p></div></div>
+          <div class="stage stage--red"><div class="stage__num">8</div><div><h4>Информирование вуза</h4><p>После получения справки МСЭ и ИПРА (либо необходимых сведений в электронной форме) — предоставить их в учебную часть для назначения стипендии и получения мер поддержки.</p></div></div>
+        </div>
+
+        <div class="callout callout--info"><span class="callout__icon">ℹ️</span><div><b>Дополнительные рекомендации.</b> Все иностранные медицинские документы должны быть переведены на русский язык и нотариально заверены. При отсутствии РВП или ВНЖ на момент поступления рекомендуется заблаговременно уточнить в приёмной комиссии РУДН возможность предоставления специальных условий на основании заявления и иностранных медицинских документов. Студентам по учебной визе стоит заранее уточнить возможность прохождения МСЭ в период обучения.</div></div>
+        <p style="font-size:12.5px; color:var(--ink-faint); margin-top:10px;">Полный текст — также в <a href="#app4">Приложении 4</a> справочника.</p>
+      </section>
+
+      <!-- ================= GUIDE: STAFF ================= -->
+      <section id="guide-staff" class="section">
+        <div class="section-head"><h2>Чек-лист сотрудника РУДН</h2></div>
+        <p class="section-intro">Алгоритм для приёмной комиссии, отдела по работе с иностранными обучающимися и профильных подразделений при организации приёма, обучения и сопровождения.</p>
+        <div class="stepper">
+          <div class="stage"><div class="stage__num">1</div><div><h4>Приём заявления и первичный запрос</h4><p>После приёма основного пакета документов направить абитуриенту форму заявления/анкеты о наличии потребности в особых условиях. При указании потребности (или наличии иностранной медицинской справки) — запросить письменное заявление с конкретными потребностями.</p><div class="ref">См. п. 1.4 справочника; <a href="#app1">Приложение 1</a></div></div></div>
+          <div class="stage"><div class="stage__num">2</div><div><h4>Сбор и легализация документов</h4><p>Принять иностранные медицинские документы с нотариально заверенным переводом как основание для создания условий на период вступительных испытаний. Не требовать справку МСЭ для базовых условий (увеличение времени, ассистент) — иностранных документов достаточно. Проверить наличие медосмотров, если специальность входит в перечень Постановления № 697.</p><div class="ref">Отказ в приёме документов из-за отсутствия справки МСЭ — неправомерен</div></div></div>
+          <div class="stage"><div class="stage__num">3</div><div><h4>Информирование о легализации статуса</h4><p>Разъяснить абитуриенту необходимость пройти МСЭ в РФ для полноценного пакета условий и ИПРА. Выдать памятку с алгоритмом прохождения МСЭ (Приложение 3) и контактами ближайшего бюро.</p></div></div>
+          <div class="stage"><div class="stage__num">4</div><div><h4>Организация вступительных испытаний</h4><p>На основании заявления организовать специальные условия на экзаменах в зависимости от категории нарушения</p><div class="ref">Глава 3, п. 3.1; Приказ Минобрнауки № 821 (ред. 2025)</div></div></div>
+          <div class="stage"><div class="stage__num">5</div><div><h4>Содействие в прохождении МСЭ</h4><p>Оказать организационную помощь в обращении в медицинскую организацию по месту жительства для получения направления, предоставить справку из вуза о статусе. Предупредить о необходимости передать оригиналы/копии справки МСЭ и ИПРА в отдел по работе со студентами не позднее 1 месяца с даты получения (если иной срок не установлен локальным актом).</p></div></div>
+          <div class="stage"><div class="stage__num">6</div><div><h4>Обеспечение доступной среды</h4><p>Универсальные условия: доступ в здание (пандусы, лифты), адаптированное общежитие (1-й этаж, спецсанузел), сопровождение волонтёрами в период адаптации и обучения.</p><div class="ref">См. п. 3.2</div></div></div>
+          <div class="stage"><div class="stage__num">7</div><div><h4>Оформление ИПРА и льгот</h4><p>После получения обучающимся российской справки об инвалидности и ИПРА — оформить материальную помощь, предоставить более широкий спектр особых условий.</p><div class="ref">Глава 6.1; ст. 36 ФЗ-273</div></div></div>
+          <div class="stage"><div class="stage__num">8</div><div><h4>Информационная политика</h4><p>Разместить на сайте РУДН в разделе для иностранных абитуриентов отдельный блок с инструкцией для лиц с инвалидностью и контакты ответственного куратора по инклюзии.</p><div class="ref">Приказ Рособрнадзора № 1493</div></div></div>
+        </div>
+        <p style="font-size:12.5px; color:var(--ink-faint); margin-top:14px;">Полный текст — также в <a href="#app5">Приложении 5</a> справочника.</p>
+      </section>
+
+      <!-- ================= CHAPTER 1 ================= -->
+      <section id="ch1" class="section">
+        <div class="section-head"><span class="section-num">Глава 1</span><h2>Правовой статус и признание инвалидности в РФ</h2></div>
+
+        <div class="sub-head">1.1 Международные обязательства РФ <span class="tag">Конвенция ООН 2006</span></div>
+        <p>Основной нормативный документ — Федеральный закон от 24.11.1995 № 181-ФЗ «О социальной защите инвалидов в РФ». В связи с ратификацией Конвенции о правах инвалидов (резолюция 61/106 Генассамблеи ООН от 13.12.2006), Россия признаёт следующие права инвалидов:</p>
+        <div class="right-grid">
+          <div class="right-card"><h4>На самостоятельный образ жизни</h4><p>Ч. b ст. 19: доступ к оказываемым на дому услугам и персональной помощи для недопущения изоляции от местного сообщества.</p></div>
+          <div class="right-card"><h4>На индивидуальную мобильность</h4><p>Ч. b ст. 20: доступ к качественным средствам мобильности, ассистивным технологиям и услугам посредников по доступной цене.</p></div>
+          <div class="right-card"><h4>На образование</h4><p>П. 5 ст. 24: доступ к общему высшему образованию, профобучению и образованию в течение всей жизни без дискриминации наравне с другими.</p></div>
+          <div class="right-card"><h4>На здоровье</h4><p>Ч. f ст. 25: недопущение дискриминационного отказа в здравоохранении или услугах в этой области.</p></div>
+        </div>
+
+        <div class="sub-head">1.2 Нормативно-правовая база <span class="tag">29 актов</span></div>
+        <p>Справочник разработан в соответствии с федеральными законами, постановлениями Правительства РФ и приказами профильных министерств.</p>
+        <details class="acc">
+          <summary>Показать полный перечень нормативных актов (29)</summary>
+          <div class="acc-body">
+            <ul id="npaList"></ul>
+          </div>
+        </details>
+
+        <div class="sub-head">1.3 Медико-социальная экспертиза (МСЭ) для иностранных граждан</div>
+        <p>Иностранные граждане, законно находящиеся в РФ, имеют право на освидетельствование в бюро МСЭ для установления инвалидности по российскому законодательству — независимо от миграционного статуса. Основание для направления — медицинские показания (п. 17 Правил № 588), а не вид статуса пребывания.</p>
+        <ol class="steps">
+          <li><h4>Определение порядка получения медицинской помощи</h4><p>Зависит от страхового и миграционного статуса (ОМС, ДМС или договор на платные услуги). Обратиться можно в любую лицензированную медицинскую организацию, в том числе клинику при вузе.</p></li>
+          <li><h4>Прохождение медицинского обследования</h4><p>Врачебная комиссия оформляет направление на МСЭ (форма № 088/у) при наличии данных о стойком нарушении функций организма. Перечень обследований — приказ Минтруда/Минздрава № 259н/238н.</p></li>
+          <li><h4>Получение направления на МСЭ</h4><p>Медицинская организация предоставляет: паспорт с нотариальным переводом, документ о законности пребывания, СНИЛС (при наличии), имеющиеся медицинские документы с переводом.</p></li>
+          <li><h4>Передача направления в бюро МСЭ</h4><p>В электронном виде через медицинские информационные системы в ГИС «Единая централизованная цифровая платформа в социальной сфере». Гражданин лично документы не передаёт.</p></li>
+          <li><h4>Проведение медико-социальной экспертизы</h4><p>С личным присутствием или заочно — в срок до 30 рабочих дней с даты регистрации направления. Бюро МСЭ может запрашивать дополнительные обследования.</p></li>
+          <li><h4>Получение решения и ИПРА</h4><p>Принимается решение об установлении (или отказе в установлении) группы инвалидности; при положительном решении выдаётся справка и разрабатывается ИПРА.</p></li>
+        </ol>
+        <div class="pill-row">
+          <span class="pill">До 30 рабочих дней — общий порядок</span>
+          <span class="pill">До 3 рабочих дней — после ампутации/протезирования</span>
+          <span class="pill">До 1 рабочего дня — паллиативная помощь</span>
+        </div>
+
+        <div class="sub-head">1.4 Признание иностранных документов об инвалидности</div>
+        <p>При отсутствии у иностранного гражданина российских документов, подтверждающих инвалидность, вуз <strong>не вправе автоматически отказать</strong> в создании специальных условий — обязанность их предоставления не зависит от гражданства (ст. 5, 28 ФЗ-273; ст. 79 ФЗ-181).</p>
+        <details class="acc">
+          <summary>1. Заявительный характер</summary>
+          <div class="acc-body"><p>Основанием служит письменное заявление абитуриента с приложением документа об инвалидности/ОВЗ, переведённого на русский язык и заверенного нотариально.</p></div>
+        </details>
+        <details class="acc">
+          <summary>2. Легализация (анализ) предоставленных документов</summary>
+          <div class="acc-body"><p>Вуз может рассмотреть иностранную справку после перевода и нотариального заверения как основание для условий (увеличение времени, технические средства). Признание зависит от внутренних правил вуза и возможности верификации подлинности.</p></div>
+        </details>
+        <details class="acc">
+          <summary>3. Возможность обращения в учреждение МСЭ</summary>
+          <div class="acc-body"><p>Иностранный гражданин может пройти освидетельствование по месту фактического проживания для получения статуса и ИПРА по российскому законодательству.</p></div>
+        </details>
+        <details class="acc">
+          <summary>4. Беседа с абитуриентом на этапе поступления</summary>
+          <div class="acc-body"><p>Условия могут уточняться в ходе беседы, по итогам которой оформляется заявление о создании специальных условий поступления, обучения, сопровождения, проживания.</p></div>
+        </details>
+        <details class="acc">
+          <summary>5. Оказание содействия заявителю</summary>
+          <div class="acc-body"><p>Вуз обязан содействовать в направлении заявлений, сборе и верификации медицинских документов, а также разместить на сайте специализированный раздел с инструкциями для абитуриентов с инвалидностью.</p></div>
+        </details>
+
+        <div class="sub-head">1.5 Юридические препятствия и практические рекомендации</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Препятствие</th><th>Пути решения</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Непризнание иностранных документов об инвалидности.</strong> Инвалидность, установленная за рубежом, не признаётся автоматически (искл. — инвалидность, установленная на территории республик СССР до 8.12.1991).</td><td>Пройти МСЭ в установленном порядке. Вуз вправе рассматривать иностранные документы (с нотариальным переводом) для определения временных специальных условий на период до получения официального статуса в РФ.</td></tr>
+            <tr><td><strong>Отсутствие правового статуса для доступа к медицинской помощи.</strong></td><td>Студенты с РВП, полученным для получения образования (ст. 6.2 ФЗ № 115-ФЗ), подлежат обязательному медицинскому страхованию (ст. 10 ФЗ № 326-ФЗ) и могут обращаться за направлением на МСЭ. Без полиса ОМС — обследование на платной основе.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout callout--warn"><span class="callout__icon">⚖️</span><div><b>Важно.</b> На соотечественников, не являющихся гражданами РФ, не распространяются льготы российских инвалидов при приёме на бюджетные программы (приём без вступительных испытаний, преимущественное зачисление), за исключением случаев, предусмотренных международным договором.</div></div>
+
+        <div class="sub-head">1.6 Комплексные и нетипичные образовательные потребности</div>
+        <div class="noso-grid">
+          <details class="noso"><summary><span class="noso__badge">1</span>Студенты с ПТСР</summary><p>Юридически не относятся к студентам с «особыми образовательными потребностями». Это исключает автоматическое право на специальные условия, несмотря на возможные трудности в учёбе — поддержку нужно решать индивидуально через службы вуза.</p></details>
+          <details class="noso"><summary><span class="noso__badge">2</span>Комплексные особенности (двойная адаптация)</summary><p>Законодательство не предусматривает «двойной адаптации» — например, для глухого студента, изучающего русский как иностранный: он не владеет РЖЯ на нужном уровне. Адаптация — только в индивидуальном порядке.</p></details>
+          <details class="noso"><summary><span class="noso__badge">3</span>Языковой барьер</summary><p>Юридически эта категория не относится к инклюзивной группе. Вуз не обязан предоставлять лингвистическое сопровождение — помощь можно запрашивать факультативно на кафедрах русского языка.</p></details>
+          <details class="noso"><summary><span class="noso__badge">4</span>Религиозные и культурные особенности</summary><p>Гендерный фактор при назначении сопровождения (психолог, тьютор того же пола) юридически не гарантирован — реализуется только по согласованию с администрацией вуза.</p></details>
+          <details class="noso"><summary><span class="noso__badge">5</span>Иные академические традиции</summary><p>Адаптация экзаменационных форматов (устные дискуссии, защита проектов) под культурные особенности законодательством не предусмотрена — рекомендуется заранее осваивать навыки публичной дискуссии.</p></details>
+          <details class="noso"><summary><span class="noso__badge">6</span>Одарённые студенты</summary><p>Право на индивидуальные траектории и наставничество закреплено в общем виде, без конкретных механизмов для иностранных студентов — оформляется через деканат.</p></details>
+          <details class="noso"><summary><span class="noso__badge">7</span>Острая социокультурная дезориентация</summary><p>Специальных государственных программ адаптации для таких ситуаций не предусмотрено — рекомендуется обращаться в психологическую службу или международный отдел вуза.</p></details>
+        </div>
+      </section>
+
+      <!-- ================= CHAPTER 2 ================= -->
+      <section id="ch2" class="section">
+        <div class="section-head"><span class="section-num">Глава 2</span><h2>Пути поступления в российские вузы</h2></div>
+        <p class="section-intro">Иностранные граждане и лица без гражданства получают образование в РФ в соответствии с международными договорами, федеральными законами или квотой Правительства РФ, а также на платной основе.</p>
+
+        <div class="sub-head">2.1 Квота Правительства РФ</div>
+        <p>Бесплатное обучение в госвузах за счёт федерального бюджета. Отбор — через Россотрудничество (за рубежом) либо напрямую через вуз с контрольными цифрами приёма; включает бакалавриат, специалитет, магистратуру, место в общежитии (при наличии) и государственную академическую стипендию вне зависимости от успеваемости.</p>
+        <div class="callout callout--info"><span class="callout__icon">✔️</span><div><b>Специальные условия при вступительных испытаниях в рамках квоты:</b> увеличение продолжительности, отдельная аудитория, ассистивные технологии, ассистент-переводчик РЖЯ, дублирование информации в доступной форме (крупный шрифт, Брайль, аудио).</div></div>
+        <div class="callout callout--warn"><span class="callout__icon">⚠️</span><div><b>Важно.</b> Предоставление ассистентов для бытовых вопросов (приготовление пищи, сопровождение вне вуза) <b>не входит</b> в обязательный перечень специальных условий — это дополнительная мера, зависящая от ресурсов вуза и волонтёрских программ.</div></div>
+
+        <div class="sub-head">2.2 Поступление по линии Россотрудничества</div>
+        <p>Отбор осуществляется через представительства Россотрудничества (Российские центры науки и культуры) за рубежом. Заявки подаются через портал «Образование в России» (<a href="https://education-in-russia.com" target="_blank" rel="noopener">education-in-russia.com</a>), включая тестирование по русскому языку и общеобразовательным предметам. При инвалидности рекомендуется заблаговременно уведомить представительство об особых потребностях.</p>
+
+        <div class="sub-head">2.3 Олимпиады</div>
+        <div class="right-grid">
+          <div class="right-card"><h4>Олимпиада «Open Doors»</h4><p>Проводится по инициативе Минобрнауки РФ в дистанционном формате. Победители и призёры поступают на бюджетные места бакалавриата, магистратуры и аспирантуры без вступительных испытаний. Организаторы обязаны обеспечить доступные форматы заданий и техподдержку для участников с инвалидностью.</p></div>
+          <div class="right-card"><h4>Внутривузовские олимпиады</h4><p>Победители и призёры олимпиад РУДН и других вузов имеют право на поступление без экзаменов, бесплатное обучение или льготы. Полный перечень — на портале «Study in Russia» и сайтах вузов.</p></div>
+        </div>
+
+        <div class="sub-head">2.4 Поступление на общих основаниях (контрактная основа)</div>
+        <p>Иностранные граждане наравне с россиянами могут поступать по договору об образовании. Требования к документам аналогичны квотным. Инвалидность не препятствует заключению договора — вуз обязан создать специальные условия при наличии заявления и подтверждающих документов.</p>
+
+        <div class="sub-head">2.5 Особенности поступления для соотечественников из стран СНГ</div>
+        <p>Соотечественники, проживающие за рубежом, поступают наравне с гражданами РФ при подтверждении гражданства СССР, проживания на территории Российского государства/РСФСР/СССР/РФ, родства по прямой восходящей линии или проживания за рубежом (ст. 17 ФЗ № 99-ФЗ). По Соглашению от 15.05.1992 право на конкурс на бюджетные места на общих основаниях с гражданами РФ имеют граждане:</p>
+        <div class="pill-row">
+          <span class="pill on">Армения</span><span class="pill on">Беларусь</span><span class="pill on">Казахстан</span><span class="pill on">Кыргызстан</span>
+          <span class="pill on">Молдова</span><span class="pill on">Россия</span><span class="pill on">Таджикистан</span><span class="pill on">Туркменистан</span><span class="pill on">Узбекистан</span>
+        </div>
+        <div class="callout callout--warn"><span class="callout__icon">⚠️</span><div><b>Важное уточнение.</b> На соотечественников, не являющихся гражданами РФ, не распространяются льготы граждан РФ при поступлении на бюджетные программы бакалавриата/специалитета, за исключением: победителей и призёров всероссийской олимпиады школьников; членов сборных команд РФ на международных олимпиадах; членов сборных команд иностранного государства — победителей олимпиад, признанных Правительством РФ (в течение 4 лет после проведения олимпиады, по соответствующему профилю).</div></div>
+      </section>
+
+      <!-- ================= CHAPTER 3 ================= -->
+      <section id="ch3" class="section">
+        <div class="section-head"><span class="section-num">Глава 3</span><h2>Особые условия при поступлении и обучении</h2></div>
+
+        <div class="sub-head">3.1 Вступительные испытания: общие правила</div>
+        <p>Образовательная организация <strong>обязана</strong> обеспечить проведение вступительных испытаний с учётом психофизического развития, индивидуальных возможностей и состояния здоровья поступающего. Форма заявления — <a href="#app1">Приложение 1</a>.</p>
+        <div class="pill-row">
+          <span class="pill">Допускается ассистент в аудитории на время испытания</span>
+          <span class="pill">Увеличение продолжительности — не более чем на 1,5 часа</span>
+          <span class="pill">Разрешено использование необходимых технических средств</span>
+        </div>
+        <div class="sub-head" style="margin-top:22px;">Дополнительные требования в зависимости от категории нарушения</div>
+        <div class="noso-grid">
+          <details class="noso"><summary><span class="noso__badge">👁️</span>Слепые</summary><p>Задания — рельефно-точечным шрифтом Брайля или электронным документом со специализированным ПО; письменные задания — на бумаге по Брайлю, на компьютере или надиктовываются ассистенту. Предоставляются комплект письменных принадлежностей и бумага для Брайля, компьютер со спецПО.</p></details>
+          <details class="noso"><summary><span class="noso__badge">👓</span>Слабовидящие</summary><p>Индивидуальное равномерное освещение не менее 300 люкс. При необходимости — увеличивающее устройство (или собственное); задания и инструкция оформляются увеличенным шрифтом.</p></details>
+          <details class="noso"><summary><span class="noso__badge">👂</span>Глухие и слабослышащие</summary><p>Звукоусиливающая аппаратура коллективного и (при необходимости) индивидуального пользования; возможны услуги сурдопереводчика.</p></details>
+          <details class="noso"><summary><span class="noso__badge">🤝</span>Слепоглухие</summary><p>Услуги тифлосурдопереводчика — помимо требований для слепых и глухих.</p></details>
+          <details class="noso"><summary><span class="noso__badge">🗣️</span>Лица с ТНР, глухие, слабослышащие</summary><p>Испытания, проводимые в устной форме, проводятся в письменной (доп. творческие/профессиональные испытания — по решению организации).</p></details>
+          <details class="noso"><summary><span class="noso__badge">🦽</span>Лица с НОДА</summary><p>Письменные задания выполняются на компьютере со спецПО или надиктовываются ассистенту. Устные испытания при необходимости переводятся в письменную форму.</p></details>
+          <details class="noso"><summary><span class="noso__badge">🧩</span>Лица с РАС</summary><p>Испытания, проводимые в устной форме, проводятся в письменной форме.</p></details>
+          <details class="noso"><summary><span class="noso__badge">🩺</span>Лица с общим заболеванием</summary><p>Беспрепятственный выход в туалетную комнату, проветривание помещения, организация первой помощи и вызов скорой при необходимости — в соответствии со ст. 41 ФЗ № 273-ФЗ.</p></details>
+        </div>
+
+        <div class="sub-head">3.2 Архитектурная доступность и сопровождение</div>
+        <p>В соответствии с приказом Минобрнауки № 384 от 25.04.2025 вуз обязан обеспечить:</p>
+        <div class="right-grid">
+          <div class="right-card"><h4>Архитектурная доступность</h4><p>Пандусы, лифты, расширенные дверные проёмы; адаптированные аудитории (столы для коляски); доступность общежитий; спецоборудованные санитарно-бытовые помещения.</p></div>
+          <div class="right-card"><h4>Информационная доступность</h4><p>Адаптация материалов (крупный шрифт, Брайль, аудио); дублирование информации на сайте вуза; сведения о порядке предоставления специальных условий.</p></div>
+          <div class="right-card"><h4>Сопровождение</h4><p>В пределах вуза (отдельные вузы, например СФУ, встречают в аэропорту); волонтёрское сопровождение в период обучения при наличии программ.</p></div>
+        </div>
+        <div class="callout callout--warn"><span class="callout__icon">⚠️</span><div><b>Важно.</b> Ассистенты для бытовых вопросов (приготовление пищи, сопровождение вне вуза) не входят в обязательный перечень — это дополнительная мера поддержки.</div></div>
+
+        <div class="sub-head">3.3 Заявление об особых условиях при обучении и проживании</div>
+        <p>Образец формы — <a href="#app2">Приложение 2</a> настоящего справочника.</p>
+      </section>
+
+      <!-- ================= CHAPTER 4 ================= -->
+      <section id="ch4" class="section">
+        <div class="section-head"><span class="section-num">Глава 4</span><h2>Пошаговая инструкция</h2></div>
+
+        <div class="sub-head">4.1 Сроки приёма</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Этап</th><th>Сроки (ориентировочные)</th></tr></thead>
+          <tbody>
+            <tr><td>Начало приёма документов</td><td>Не позднее 20 июня текущего года</td></tr>
+            <tr><td>Завершение приёма документов</td><td>25 июля — бакалавриат/специалитет; 20 августа — магистратура</td></tr>
+            <tr><td>Проведение вступительных испытаний</td><td>Июль – август (конкретные даты устанавливает вуз)</td></tr>
+            <tr><td>Публикация приказов о зачислении</td><td>Не позднее 17 августа (основной этап); 30 августа (дополнительный этап)</td></tr>
+          </tbody>
+        </table></div>
+        <div class="pill-row" style="margin-top:14px;">
+          <span class="pill">Квота Правительства РФ: приём заявок на отбор — до 1 марта года поступления</span>
+          <span class="pill">Open Doors: регистрация сентябрь–ноябрь, финалы декабрь/февраль</span>
+        </div>
+        <div class="callout callout--info"><span class="callout__icon">🔗</span><div>Точные даты уточняйте на сайте РУДН и портале «Образование в России» (<a href="https://education-in-russia.com" target="_blank" rel="noopener">education-in-russia.com</a>) — сроки могут корректироваться.</div></div>
+
+        <div class="sub-head">4.2 Документы: интерактивный чек-лист</div>
+        <p class="checklist-progress" id="docsProgress">Собрано 0 из 7</p>
+        <ul class="checklist" id="docsChecklist">
+          <li data-key="doc1"><input type="checkbox" id="doc1"><label for="doc1"><strong>Паспорт</strong>, удостоверяющий личность и гражданство — с нотариально заверенным переводом на русский язык.</label></li>
+          <li data-key="doc2"><input type="checkbox" id="doc2"><label for="doc2"><strong>Документ о законности пребывания</strong> в РФ (ВНЖ, РВП, удостоверение беженца, виза, миграционная карта, уведомление о прибытии).</label></li>
+          <li data-key="doc3"><input type="checkbox" id="doc3"><label for="doc3"><strong>Документ об образовании</strong> (аттестат/диплом) с нотариально заверенным переводом; при необходимости — с апостилем или легализацией.</label></li>
+          <li data-key="doc4"><input type="checkbox" id="doc4"><label for="doc4"><strong>Сертификат ТРКИ</strong> — не ниже уровня B1 (бакалавриат/специалитет) или B2 (магистратура) при обучении на русском языке.</label></li>
+          <li data-key="doc5"><input type="checkbox" id="doc5"><label for="doc5"><strong>СНИЛС</strong> (при наличии) — для социальных выплат и регистрации в системе индивидуального учёта.</label></li>
+          <li data-key="doc6"><input type="checkbox" id="doc6"><label for="doc6"><strong>Фотографии</strong> 3×4 см, матовые, 2–4 шт. — по требованию вуза.</label></li>
+          <li data-key="doc7"><input type="checkbox" id="doc7"><label for="doc7"><strong>Согласие на обработку персональных данных</strong> — по форме вуза, отдельно от заявления и иных документов.</label></li>
+        </ul>
+        <div class="callout callout--info"><span class="callout__icon">ℹ️</span><div>Медицинское заключение об отсутствии противопоказаний <b>не является универсальным требованием</b> для всех программ — необходимость определяется отбором в рамках квоты (уточнять у уполномоченного органа) либо приёмом на специальности из перечня Постановления Правительства РФ № 697 от 14.08.2013.</div></div>
+
+        <div class="sub-head">4.3 Требования миграционного законодательства к медицинскому освидетельствованию</div>
+        <p>Иностранные граждане, прибывшие в РФ на срок более 90 календарных дней в целях, не связанных с трудовой деятельностью, обязаны пройти медицинское освидетельствование в течение 90 календарных дней со дня въезда (п. 18 ст. 5 ФЗ № 115-ФЗ), если иное не предусмотрено законом или международным договором. Проводится в медицинских организациях, включённых в перечень субъекта РФ; порядок регулирует приказ Минздрава № 1079н. Повторное освидетельствование проходит в установленные сроки с представлением документов в территориальный орган МВД.</p>
+
+        <div class="sub-head">4.4 Дополнительные документы для лиц с инвалидностью</div>
+        <div class="right-grid">
+          <div class="right-card"><h4>При наличии российского документа МСЭ</h4><p>Сведения, подтверждающие факт установления инвалидности (справка об установлении инвалидности и/или ИПРА) — могут быть запрошены через ГИС «Единая централизованная цифровая платформа в социальной сфере».</p></div>
+          <div class="right-card"><h4>При отсутствии российских документов</h4><p>Иностранные медицинские документы, подтверждающие инвалидность/ОВЗ, с нотариально заверенным переводом — используются вузом для определения специальных условий на период до получения статуса инвалида в РФ.</p></div>
+        </div>
+
+        <div class="sub-head">4.5 Особые требования к обработке персональных данных</div>
+        <p>Формы заявлений о предоставлении специальных условий (Приложения 1 и 2) предусматривают сбор специальных категорий персональных данных (ст. 10 ФЗ № 152-ФЗ). Их обработка должна вестись на основании отдельного письменного согласия (ст. 9, 10 ФЗ № 152-ФЗ), в котором определены: цели и сроки обработки, круг лиц с доступом, порядок хранения и уничтожения. Такое согласие <strong>не заменяет</strong> информированное добровольное согласие на медицинское вмешательство (ст. 20 ФЗ № 323-ФЗ). Рекомендуется ограничивать объём запрашиваемых сведений функциональными потребностями, не раскрывая диагноз и группу инвалидности без прямого законодательного основания.</p>
+      </section>
+
+      <!-- ================= CHAPTER 5 ================= -->
+      <section id="ch5" class="section">
+        <div class="section-head"><span class="section-num">Глава 5</span><h2>Финансовые вопросы</h2></div>
+
+        <div class="sub-head">5.1 Грантовая поддержка</div>
+        <div class="right-grid">
+          <div class="right-card"><h4>Скидки на обучение</h4><p>Некоторые вузы предоставляют скидки 10–50% для иностранных граждан с инвалидностью. Размер и условия устанавливаются локальными актами — уточнять в приёмной комиссии.</p></div>
+          <div class="right-card"><h4>Гранты Правительства РФ</h4><p>В рамках квоты — обучение полностью бесплатное за счёт федерального бюджета плюс государственная академическая стипендия весь период обучения.</p></div>
+          <div class="right-card"><h4>Стипендии Президента и Правительства РФ</h4><p>За успехи в учёбе и научной деятельности, конкурсный отбор — ежегодно.</p></div>
+          <div class="right-card"><h4>Гранты фондов и организаций</h4><p>Фонд «Русский мир», фонд Горчакова, Россотрудничество — при условии успешного участия в конкурсах.</p></div>
+        </div>
+
+        <div class="sub-head">5.2 Медицинская страховка: ОМС / ДМС</div>
+        <details class="acc" open>
+          <summary>Обязательное медицинское страхование (ОМС)</summary>
+          <div class="acc-body">
+            <p>Застрахованными лицами являются: <b>постоянно проживающие</b> иностранные граждане (имеющие ВНЖ) и <b>временно проживающие</b> (имеющие РВП, включая РВП в целях получения образования, ст. 6.2 ФЗ № 115-ФЗ) — независимо от факта трудоустройства.</p>
+            <p><b>Временно пребывающие</b> иностранные граждане (в том числе по учебной визе) могут приобрести права на ОМС при наличии оснований, предусмотренных законодательством и международными договорами. Сам факт обучения в российском вузе права на ОМС не создаёт.</p>
+          </div>
+        </details>
+        <details class="acc">
+          <summary>Добровольное медицинское страхование (ДМС) и платные услуги</summary>
+          <div class="acc-body">
+            <p>Для временно пребывающих, не имеющих права на ОМС, законодательство предусматривает один из двух документов: полис ДМС (доступ к услугам в объёме договора) либо договор о предоставлении платных медицинских услуг напрямую с лицензированной медицинской организацией.</p>
+          </div>
+        </details>
+        <div class="callout callout--warn"><span class="callout__icon">⚠️</span><div><b>Важно.</b> Наличие полиса ДМС не является универсальным обязательным требованием для всех иностранных граждан, прибывших на срок более 90 дней — достаточно любого из двух вышеуказанных документов.</div></div>
+
+        <div class="sub-head">Порядок оказания медицинской помощи</div>
+        <div class="right-grid">
+          <div class="right-card"><h4>Экстренная помощь</h4><p>При внезапных острых заболеваниях и состояниях, угрожающих жизни — оказывается бесплатно всем иностранным гражданам.</p></div>
+          <div class="right-card"><h4>Скорая помощь</h4><p>Оказывается бесплатно (п. 6 Правил, Постановление Правительства РФ от 08.05.2025 № 631).</p></div>
+          <div class="right-card"><h4>Неотложная и плановая помощь</h4><p>В рамках ОМС — бесплатно для застрахованных; по договору платных услуг — для не имеющих права на ОМС; по полису ДМС — в объёме договора.</p></div>
+        </div>
+      </section>
+
+      <!-- ================= CHAPTER 6 ================= -->
+      <section id="ch6" class="section">
+        <div class="section-head"><span class="section-num">Глава 6</span><h2>Социальная поддержка и сопровождение</h2></div>
+
+        <div class="sub-head">6.1 Меры социальной поддержки</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Мера</th><th>Содержание</th></tr></thead>
+          <tbody id="supportTable"></tbody>
+        </table></div>
+        <div class="callout callout--warn"><span class="callout__icon">⚠️</span><div><b>Важно.</b> Для получения социальной стипендии и других льгот необходимо иметь справку об установлении инвалидности и быть зачисленным на бюджетную основу обучения.</div></div>
+
+        <div class="sub-head">6.2 Реестр государственных организаций</div>
+        <div class="dir-grid" id="orgsGrid"></div>
+
+        <div class="sub-head">6.3 Полезные сервисы и порталы</div>
+        <div class="dir-grid" id="portalsGrid"></div>
+      </section>
+
+      <!-- ================= CHAPTER 7 — GLOSSARY ================= -->
+      <section id="ch7" class="section">
+        <div class="section-head"><span class="section-num">Глава 7</span><h2>Тематический словарь терминов</h2></div>
+        <p class="section-intro">Определения общепринятых терминов, используемых в сфере социальной защиты, образования и медицинского обеспечения инвалидов, в том числе иностранных граждан.</p>
+        <div class="gloss-tools">
+          <div class="gloss-search"><input type="text" id="glossSearch" placeholder="Найти термин или слово в определении…" autocomplete="off"></div>
+          <span class="gloss-count" id="glossCount"></span>
+        </div>
+        <div class="letter-nav" id="letterNav"></div>
+        <dl class="gloss-list" id="glossList" style="margin-top:16px;"></dl>
+        <p class="gloss-empty" id="glossEmpty">Ничего не найдено. Попробуйте другой запрос.</p>
+      </section>
+
+      <!-- ================= CHAPTER 8 ================= -->
+      <section id="ch8" class="section">
+        <div class="section-head"><span class="section-num">Глава 8</span><h2>Реестр правовых гарантий инвалида в РФ</h2></div>
+        <p class="section-intro">Обобщённый перечень гарантий, установленных ФЗ № 181-ФЗ, ФЗ № 273-ФЗ и другими актами. Объём гарантий для иностранных граждан может ограничиваться их правовым статусом (наличие РВП/ВНЖ, гражданство РФ и т.п.).</p>
+
+        <div class="sub-head">8.1 Гарантии в сфере образования</div>
+        <div class="table-wrap"><table><thead><tr><th class="num">№</th><th>Право / гарантия</th><th>Нормативное основание</th></tr></thead><tbody id="rt-edu"></tbody></table></div>
+
+        <div class="sub-head">8.2 Гарантии в сфере социальной защиты и медицинского обеспечения</div>
+        <div class="table-wrap"><table><thead><tr><th class="num">№</th><th>Право / гарантия</th><th>Нормативное основание</th></tr></thead><tbody id="rt-soc"></tbody></table></div>
+
+        <div class="sub-head">8.3 Гарантии в сфере труда и занятости</div>
+        <div class="table-wrap"><table><thead><tr><th class="num">№</th><th>Право / гарантия</th><th>Нормативное основание</th></tr></thead><tbody id="rt-labor"></tbody></table></div>
+
+        <div class="sub-head">8.4 Гарантии в сфере архитектурной доступности</div>
+        <div class="table-wrap"><table><thead><tr><th class="num">№</th><th>Право / гарантия</th><th>Нормативное основание</th></tr></thead><tbody id="rt-arch"></tbody></table></div>
+
+        <div class="sub-head">8.5 Гарантии в сфере защиты прав</div>
+        <div class="table-wrap"><table><thead><tr><th class="num">№</th><th>Право / гарантия</th><th>Нормативное основание</th></tr></thead><tbody id="rt-legal"></tbody></table></div>
+
+        <div class="callout callout--info"><span class="callout__icon">ℹ️</span><div><b>Важное примечание для иностранных граждан.</b> Большинство гарантий, перечисленных в этой главе, предоставляются в полном объёме гражданам РФ. Иностранные граждане с инвалидностью имеют право на часть из них при условии наличия законного статуса пребывания (РВП, ВНЖ, статус беженца) и российского документа об инвалидности (справки МСЭ). За конкретными льготами и выплатами рекомендуется обращаться в Социальный фонд России по месту жительства, а также в профильные службы РУДН.</div></div>
+      </section>
+
+      <!-- ================= APPENDICES ================= -->
+      <section id="app1" class="section">
+        <div class="section-head"><span class="section-num">Прил. 1</span><h2>Заявление при поступлении</h2></div>
+        <p class="section-intro">Форма подаётся в приёмную комиссию вместе с основным пакетом документов. Разработана в соответствии с приказом Минобрнауки России от 27.11.2024 № 821 (ред. от 26.11.2025) и Методическими рекомендациями (утв. Минобрнауки России 29.06.2015 № АК-1782/05).</p>
+        <div class="right-grid">
+          <div class="right-card"><h4>Статус, подтверждающий право на условия</h4><p>Инвалидность (справка об инвалидности) · ограниченные возможности здоровья (заключение ПМПК) · иное — указывается отдельно.</p></div>
+          <div class="right-card"><h4>Функциональные нарушения</h4><p>Опорно-двигательного аппарата · зрения (слепота/слабовидение) · слуха (глухота/слабослышание) · слепоглухота · тяжёлые нарушения речи · РАС · общее заболевание · иное.</p></div>
+        </div>
+        <p style="font-size:13.6px; color:var(--ink-soft); margin-top:18px;">Необходимые специальные условия (отметьте нужное):</p>
+        <div class="pill-row">
+          <span class="pill">Отдельная аудитория</span><span class="pill">Ассистент-помощник</span><span class="pill">Перерывы на отдых/лекарства</span>
+          <span class="pill">Увеличение времени (+1,5 ч)</span><span class="pill">Шрифт Брайля</span><span class="pill">Увеличенный шрифт</span>
+          <span class="pill">Увеличивающее устройство / спецПО</span><span class="pill">Звукоусиливающая аппаратура / сурдопереводчик</span>
+          <span class="pill">Тифлосурдопереводчик</span><span class="pill">Устная форма ⇄ письменная форма</span><span class="pill">Беспрепятственный выход в туалет, проветривание</span>
+          <span class="pill">Вызов скорой помощи при необходимости</span><span class="pill">Другие условия / указать конкретно</span>
+        </div>
+        <div class="callout callout--info"><span class="callout__icon">📎</span><div>Приложения к заявлению: копия справки об инвалидности (при наличии) или сведения о её установлении, в т.ч. полученные в электронной форме; копия ИПРА (при наличии); копия заключения ПМПК (при наличии); медицинские документы с нотариально заверенным переводом (при наличии иностранных документов); согласие на обработку персональных данных по установленной форме (см. <a href="#app6">Приложение 6</a>).</div></div>
+      </section>
+
+      <section id="app2" class="section">
+        <div class="section-head"><span class="section-num">Прил. 2</span><h2>Заявление на особые условия обучения и проживания</h2></div>
+        <p class="section-intro">Форма подаётся в учебную часть после зачисления — на период прохождения освидетельствования в бюро МСЭ или после его завершения, для оформления условий в учебном процессе и общежитии.</p>
+
+        <p style="margin-top:0; font-size:13.6px; color:var(--ink-soft);">Раздел А — образовательный процесс:</p>
+        <div class="pill-row">
+          <span class="pill">Адаптация образовательной программы</span><span class="pill">Индивидуальный график обучения</span>
+          <span class="pill">Индивидуальный график сдачи зачётов/экзаменов</span><span class="pill">Материалы в доступной форме</span>
+          <span class="pill">Услуги тьютора</span><span class="pill">Сурдо-/тифлосурдопереводчик</span>
+          <span class="pill">Ассистивные технологии в аудиториях</span><span class="pill">Академический отпуск по мед. показаниям</span>
+          <span class="pill">Индивидуальный учебный план</span><span class="pill">Иное / указать конкретно</span>
+        </div>
+        <p style="font-size:13.6px; color:var(--ink-soft);">Раздел Б — проживание в общежитии:</p>
+        <div class="pill-row">
+          <span class="pill">Адаптированное общежитие</span><span class="pill">Комната на 1-м этаже / без лестниц</span>
+          <span class="pill">Пандусы, поручни, широкие проёмы</span><span class="pill">Спецсанузел для коляски</span>
+          <span class="pill">Адаптированная мебель</span><span class="pill">Проживание с сопровождающим</span><span class="pill">Звуковые/световые сигналы</span><span class="pill">Иное / указать конкретно</span>
+        </div>
+        <p style="font-size:13.6px; color:var(--ink-soft);">Раздел В — социальное и медицинское сопровождение:</p>
+        <div class="pill-row">
+          <span class="pill">Волонтёрское сопровождение</span><span class="pill">Социальная стипендия</span>
+          <span class="pill">Материальная помощь на лекарства/ТСР</span><span class="pill">Содействие при обращении в медицинскую организацию/СМО/ТФОМС</span><span class="pill">Иное / указать конкретно</span>
+        </div>
+        <div class="callout callout--info"><span class="callout__icon">📎</span><div>Приложения к заявлению: копия справки об инвалидности (при наличии) или сведения о её установлении, в т.ч. полученные в электронной форме; копия ИПРА (при наличии); копия заключения ПМПК (при наличии); медицинские документы с нотариально заверенным переводом; согласие на обработку персональных данных по установленной форме (см. <a href="#app6">Приложение 6</a>).</div></div>
+      </section>
+
+      <section id="app3" class="section">
+        <div class="section-head"><span class="section-num">Прил. 3</span><h2>Алгоритм получения услуги МСЭ</h2></div>
+        <p class="section-intro">Визуализация пошагового алгоритма — та же последовательность действий, что в п. 1.3</p>
+        <div class="card">
+          <ol class="steps" style="margin:0;">
+            <li><h4>Начало процедуры</h4><p>Иностранный гражданин, законно находящийся на территории РФ, имеет право на освидетельствование в бюро МСЭ независимо от миграционного статуса (Постановление Правительства РФ № 588 от 05.04.2022).</p></li>
+            <li><h4>Обращение в медицинскую организацию</h4><p>По месту фактического проживания или регистрации, где пациент наблюдается.</p></li>
+            <li><h4>Получение направления на МСЭ</h4><p>Врачебная комиссия оформляет направление (форма утв. приказом Минтруда/Минздрава № 488н/551н). Срок: до 30 рабочих дней (общий порядок), до 3 дней (после ампутации/протезирования), до 1 дня (паллиативная помощь).</p></li>
+            <li><h4>Прохождение медицинских обследований</h4><p>Согласно Перечню (приказ Минтруда/Минздрава № 259н/238н) — лабораторные, инструментальные и клинические исследования в зависимости от заболевания.</p></li>
+            <li><h4>Сбор пакета документов</h4><p>Паспорт с переводом, документ о законности пребывания, СНИЛС (при наличии), медицинские документы, трудовая книжка (при наличии), документы представителя (при обращении через него).</p></li>
+            <li><h4>Направление документов в бюро МСЭ</h4><p>Пакет направляется медицинской организацией в электронном виде через ЕЦЦПСС.</p></li>
+            <li><h4>Проведение МСЭ</h4><p>С личным присутствием или заочно — срок до 30 рабочих дней с даты регистрации направления в ГИС «Единая централизованная цифровая платформа в социальной сфере».</p></li>
+            <li><h4>Получение решения и ИПРА</h4><p>Устанавливается (или не устанавливается) группа инвалидности; разрабатывается и выдаётся ИПРА.</p></li>
+            <li><h4>Использование ИПРА</h4><p>Основание для: специальных условий в вузе, ТСР, социальных льгот и выплат, социальной стипендии, реабилитационных мероприятий.</p></li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="app4" class="section">
+        <div class="section-head"><span class="section-num">Прил. 4</span><h2>В помощь абитуриентам с инвалидностью</h2></div>
+        <p class="section-intro">Тот же маршрут, что и в разделе <a href="#guide-applicant">«Путь абитуриента»</a> в начале справочника — приведён здесь как приложение для печати и ссылок на пункты документа.</p>
+
+        <div class="stage-group-title">I. До поступления</div>
+        <div class="stepper">
+          <div class="stage stage--blue"><div class="stage__num">1</div><div><h4>Сбор документов</h4><p>Перевести на русский язык и нотариально заверить: паспорт, документ об образовании, медицинские документы. Уточнить необходимость апостиля или консульской легализации.</p></div></div>
+          <div class="stage stage--blue"><div class="stage__num">2</div><div><h4>Выбор траектории поступления</h4><p>Квота Правительства РФ, олимпиада «Open Doors» или платное (контрактное) обучение — см. Главу 2.</p></div></div>
+        </div>
+
+        <div class="stage-group-title">II. При поступлении</div>
+        <div class="stepper">
+          <div class="stage stage--blue"><div class="stage__num">3</div><div><h4>Заявление о предоставлении специальных условий</h4><p>Подать заявление (<a href="#app1">Приложение 1</a>) вместе с документами. Без заявления особые условия не предоставляются — принцип носит заявительный характер.</p></div></div>
+          <div class="stage stage--blue"><div class="stage__num">4</div><div><h4>Подтверждение статуса</h4><p>При наличии российской справки МСЭ — приложить копию либо сведения, в том числе полученные в электронной форме. При отсутствии — иностранные медицинские документы с нотариально заверенным переводом; вуз обязан их рассмотреть для создания условий.</p></div></div>
+          <div class="stage stage--blue"><div class="stage__num">5</div><div><h4>Вступительные испытания</h4><p>Предоставляются: увеличение времени (до +1,5 часа), отдельная аудитория, ассистент, специальное оборудование — по категории нозологии</p></div></div>
+        </div>
+
+        <div class="stage-group-title">III. После зачисления</div>
+        <div class="stepper">
+          <div class="stage stage--red"><div class="stage__num">6</div><div><h4>Обращение за медицинской помощью и направлением на МСЭ</h4><p>Иностранные граждане с РВП или ВНЖ имеют право на ОМС (ст. 10 ФЗ № 326-ФЗ). Временно пребывающие могут оформить ДМС или договор о платных медицинских услугах. Срок оформления направления на МСЭ — не более 30 рабочих дней (для отдельных случаев — 3 или 1 рабочий день).</p></div></div>
+          <div class="stage stage--red"><div class="stage__num">7</div><div><h4>Заявление на специальные условия при обучении и проживании в общежитии</h4><p>Подать заявление (<a href="#app2">Приложение 2</a>) о предоставлении специальных условий в учебном процессе и общежитии на период прохождения освидетельствования в бюро МСЭ.</p></div></div>
+          <div class="stage stage--red"><div class="stage__num">8</div><div><h4>Информирование вуза</h4><p>После получения справки МСЭ и ИПРА (либо необходимых сведений в электронной форме) — предоставить их в учебную часть для назначения стипендии и получения мер поддержки.</p></div></div>
+        </div>
+
+        <div class="callout callout--info"><span class="callout__icon">ℹ️</span><div><b>Дополнительные рекомендации.</b> Все иностранные медицинские документы должны быть переведены на русский язык и нотариально заверены. При отсутствии РВП или ВНЖ на момент поступления рекомендуется заблаговременно уточнить в приёмной комиссии РУДН возможность предоставления специальных условий на основании заявления и иностранных медицинских документов. Студентам по учебной визе стоит заранее уточнить возможность прохождения МСЭ в период обучения.</div></div>
+      </section>
+
+      <section id="app5" class="section">
+        <div class="section-head"><span class="section-num">Прил. 5</span><h2>В помощь работникам РУДН</h2></div>
+        <p class="section-intro">Тот же чек-лист, что и в разделе <a href="#guide-staff">«Путь сотрудника РУДН»</a> в начале справочника — приведён здесь как приложение для печати и ссылок на пункты документа.</p>
+        <div class="stepper">
+          <div class="stage"><div class="stage__num">1</div><div><h4>Приём заявления и первичный запрос</h4><p>После приёма основного пакета документов направить абитуриенту форму заявления/анкеты о наличии потребности в особых условиях. При указании потребности (или наличии иностранной медицинской справки) — запросить письменное заявление с конкретными потребностями.</p><div class="ref">См. п. 1.4 справочника; <a href="#app1">Приложение 1</a></div></div></div>
+          <div class="stage"><div class="stage__num">2</div><div><h4>Сбор и легализация документов</h4><p>Принять иностранные медицинские документы с нотариально заверенным переводом как основание для создания условий на период вступительных испытаний. Не требовать справку МСЭ для базовых условий (увеличение времени, ассистент) — иностранных документов достаточно. Проверить наличие медосмотров, если специальность входит в перечень Постановления № 697.</p><div class="ref">Отказ в приёме документов из-за отсутствия справки МСЭ — неправомерен</div></div></div>
+          <div class="stage"><div class="stage__num">3</div><div><h4>Информирование о легализации статуса</h4><p>Разъяснить абитуриенту необходимость пройти МСЭ в РФ для полноценного пакета условий и ИПРА. Выдать памятку с алгоритмом прохождения МСЭ (Приложение 3) и контактами ближайшего бюро.</p></div></div>
+          <div class="stage"><div class="stage__num">4</div><div><h4>Организация вступительных испытаний</h4><p>На основании заявления организовать специальные условия на экзаменах в зависимости от категории нарушения</p><div class="ref">Глава 3, п. 3.1; Приказ Минобрнауки № 821 (ред. 2025)</div></div></div>
+          <div class="stage"><div class="stage__num">5</div><div><h4>Содействие в прохождении МСЭ</h4><p>Оказать организационную помощь в обращении в медицинскую организацию по месту жительства для получения направления, предоставить справку из вуза о статусе. Предупредить о необходимости передать оригиналы/копии справки МСЭ и ИПРА в отдел по работе со студентами не позднее 1 месяца с даты получения (если иной срок не установлен локальным актом).</p></div></div>
+          <div class="stage"><div class="stage__num">6</div><div><h4>Обеспечение доступной среды</h4><p>Универсальные условия: доступ в здание (пандусы, лифты), адаптированное общежитие (1-й этаж, спецсанузел), сопровождение волонтёрами в период адаптации и обучения.</p><div class="ref">См. п. 3.2</div></div></div>
+          <div class="stage"><div class="stage__num">7</div><div><h4>Оформление ИПРА и льгот</h4><p>После получения обучающимся российской справки об инвалидности и ИПРА — оформить материальную помощь, предоставить более широкий спектр особых условий.</p><div class="ref">Глава 6.1; ст. 36 ФЗ-273</div></div></div>
+          <div class="stage"><div class="stage__num">8</div><div><h4>Информационная политика</h4><p>Разместить на сайте РУДН в разделе для иностранных абитуриентов отдельный блок с инструкцией для лиц с инвалидностью и контакты ответственного куратора по инклюзии.</p><div class="ref">Приказ Рособрнадзора № 1493</div></div></div>
+        </div>
+      </section>
+
+      <section id="app6" class="section">
+        <div class="section-head"><span class="section-num">Прил. 6</span><h2>Согласие на обработку ПД о здоровье</h2></div>
+        <p class="section-intro">Отдельное письменное согласие в адрес РУДН (ул. Миклухо-Маклая, 6, Москва, 117198) на обработку специальных категорий персональных данных — в соответствии со ст. 9 ФЗ № 152-ФЗ «О персональных данных».</p>
+        <div class="right-grid">
+          <div class="right-card"><h4>Какие сведения обрабатываются</h4><p>Наличие и группа инвалидности, срок её установления, категория «ребёнок-инвалид», вид нарушений здоровья, сведения из ИПРА и заключения ПМПК, рекомендации медицинских организаций по созданию специальных условий.</p></div>
+          <div class="right-card"><h4>Цель обработки</h4><p>Предоставление особых условий при вступительных испытаниях / обучении и проживании в РУДН в соответствии с ФЗ № 273-ФЗ и приказом Минобрнауки № 821.</p></div>
+          <div class="right-card"><h4>Круг лиц с доступом</h4><p>Работники РУДН по организации приёма, учебного процесса, проживания в общежитии и оказанию социальной поддержки — в объёме, необходимом для исполнения обязанностей. Передача третьим лицам не осуществляется, кроме случаев, предусмотренных законом.</p></div>
+          <div class="right-card"><h4>Срок действия и отзыв</h4><p>До завершения приёма/обучения, но не более периода обучения в РУДН. Согласие может быть отозвано в любое время по письменному заявлению; данные уничтожаются в срок не более 30 календарных дней с даты отзыва.</p></div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <div>
+          <strong>Российский университет дружбы народов имени Патриса Лумумбы</strong><br>
+          Информационный справочник подготовлен на основе указания Минобрнауки России от 15.09.2026 № МН-11/4000-ОП и носит информационно-справочный характер. Для получения актуальных сведений и консультаций обращайтесь в приёмную комиссию РУДН, представительства Россотрудничества и Министерство науки и высшего образования РФ.
+        </div>
+        <a class="back-to-top" href="#top">↑ Наверх</a>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- data ---------------- */
+  var NPA = [
+    "Федеральный закон от 29.12.2012 № 273-ФЗ (ред. от 04.08.2026) «Об образовании в Российской Федерации».",
+    "Федеральный закон от 24.11.1995 № 181-ФЗ (ред. от 29.12.2025) «О социальной защите инвалидов в Российской Федерации».",
+    "Федеральный закон от 25.07.2002 № 115-ФЗ (ред. от 26.06.2026) «О правовом положении иностранных граждан в Российской Федерации».",
+    "Федеральный закон от 21.11.2011 № 323-ФЗ «Об основах охраны здоровья граждан в Российской Федерации».",
+    "Федеральный закон от 29.11.2010 № 326-ФЗ «Об обязательном медицинском страховании в Российской Федерации».",
+    "Федеральный закон от 30.03.1995 № 38-ФЗ «О предупреждении распространения в РФ заболевания, вызываемого вирусом иммунодефицита человека (ВИЧ-инфекции)».",
+    "Федеральный закон от 27.07.2006 № 152-ФЗ «О персональных данных».",
+    "Постановление Правительства РФ от 05.04.2022 № 588 (ред. от 03.02.2025) «О признании лица инвалидом» (с «Правилами признания лица инвалидом»).",
+    "Постановление Правительства РФ от 11.10.2023 № 1678 «Об утверждении Правил применения организациями электронного обучения, дистанционных образовательных технологий при реализации образовательных программ».",
+    "Приказ Минобрнауки России от 27.11.2024 № 821 (ред. от 26.11.2025) «Об утверждении Порядка приёма на обучение по образовательным программам высшего образования — программам бакалавриата, специалитета, магистратуры».",
+    "Приказ Минобрнауки России от 25.04.2025 № 384 «Об утверждении Порядка обеспечения условий доступности для инвалидов объектов и предоставляемых услуг в сфере науки и высшего образования».",
+    "Приказ Минобрнауки России от 02.12.2015 № 1399 «Об утверждении Плана мероприятий («дорожной карты») по повышению значений показателей доступности для инвалидов объектов и услуг в сфере образования».",
+    "Приказ Рособрнадзора от 04.08.2023 № 1493 «Об утверждении Требований к структуре официального сайта образовательной организации в сети „Интернет“».",
+    "Приказ Минобрнауки России от 03.11.2020 № 1378 «Об утверждении Порядка отбора иностранных граждан на обучение в пределах квоты Правительства РФ».",
+    "Приказ Минздрава России от 19.11.2021 № 1079н (ред. от 21.02.2022) «Об утверждении Порядка проведения медицинского освидетельствования иностранных граждан…».",
+    "Приказ Минтруда России и Минздрава России от 12.08.2022 № 488н/551н «Об утверждении формы направления на медико-социальную экспертизу…».",
+    "Приказ Минтруда России № 259н, Минздрава России № 238н от 16.05.2024 «Об утверждении перечня медицинских обследований для МСЭ».",
+    "Приказ Минздрава России от 31.07.2020 № 788н (ред. от 16.09.2025) «Об утверждении Порядка организации медицинской реабилитации взрослых».",
+    "Приказ Минтруда России от 01.09.2017 № 652н «Об утверждении перечня целей визита граждан для получения услуги по МСЭ в электронной системе управления очередью».",
+    "Постановление Правительства РФ от 14.08.2013 № 697 «Об утверждении перечня специальностей и направлений подготовки с обязательными предварительными медосмотрами».",
+    "Постановление Правительства РФ от 08.05.2025 № 631 «Об утверждении Правил оказания медицинской помощи иностранным гражданам на территории РФ».",
+    "Приказ Минздрава России от 21.08.2025 № 496н «Об утверждении Правил обязательного медицинского страхования».",
+    "Приказ Минздрава России от 03.05.2024 № 220н «Об утверждении Порядка оказания первой помощи».",
+    "Приказ Минздрава России от 14.04.2025 № 213н «Об утверждении порядка оказания несовершеннолетним медицинской помощи, в т.ч. в период обучения и воспитания».",
+    "Приказ Минобрнауки России от 04.04.2025 № 303 «Об утверждении Порядка и оснований предоставления академического отпуска обучающимся».",
+    "Приказ Минздрава России от 23.10.2019 № 878н «Об утверждении Порядка организации медицинской реабилитации детей».",
+    "Приказ Минздрава России от 24.03.2026 № 202н «Об утверждении Правил проведения обязательного медицинского освидетельствования на ВИЧ-инфекцию» (вступает в силу с указанной даты).",
+    "Приказ Минтруда России от 26.07.2024 № 374н «Об утверждении классификаций и критериев, используемых при осуществлении МСЭ».",
+    "Приказ Минтруда России от 30.12.2020 № 979н «Об утверждении Порядка организации и деятельности федеральных учреждений МСЭ»."
+  ];
+
+  var SUPPORT = [
+    ["Стипендия","Государственные академические стипендии студентам, государственные стипендии аспирантам, ординаторам, ассистентам-стажёрам, обучающимся очно за счёт бюджетных ассигнований, в том числе в пределах квоты Правительства РФ или по международным договорам (ч. 11 ст. 36 ФЗ № 273-ФЗ)."],
+    ["Льготы на проезд","Возможны скидки на социальные карты (например, в Москве иностранные студенты с ВНЖ могут оформить льготный проездной). Скидки на ж/д транспорт (пригородные поезда) — до 50% в период обучения."],
+    ["Материальная помощь","Выплачивается по решению стипендиальной комиссии вуза при подтверждённых финансовых или жизненных трудностях, в том числе на лекарства, средства реабилитации, оплату проезда."],
+    ["Академический отпуск","Право на продление сроков обучения или оформление отпуска по медицинским показаниям с сохранением места (приказ Минобрнауки № 303 от 04.04.2025) на основании личного заявления и медицинского заключения."],
+    ["Доступная среда","Специально созданные условия в общежитиях, услуги тьюторов, сурдопереводчиков или волонтёров в рамках программ инклюзивного образования."]
+  ];
+
+  var ORGS = [
+    ["Министерство науки и высшего образования РФ","Порядок приёма в вузы, квота Правительства РФ, стипендии, контроль за образовательным законодательством.","https://minobrnauki.gov.ru"],
+    ["Россотрудничество","Отбор кандидатов на обучение по квоте через представительства за рубежом, консультирование.","https://rs.gov.ru"],
+    ["Министерство здравоохранения РФ","Госполитика в сфере здравоохранения, медпомощь, медицинское освидетельствование иностранных граждан, реабилитация.","https://minzdrav.gov.ru"],
+    ["Министерство труда и социальной защиты РФ","Госполитика в сфере социальной защиты, регулирование МСЭ, признание инвалидности, ИПРА.","https://mintrud.gov.ru"],
+    ["Федеральное бюро медико-социальной экспертизы","Проведение МСЭ, переосвидетельствование, разработка ИПРА.","https://fbmse.ru"],
+    ["Федеральный фонд ОМС","Реализация госполитики в сфере ОМС, финансирование системы, контроль за использованием средств.","https://ffoms.gov.ru"],
+    ["Территориальные фонды ОМС","Обеспечение прав застрахованных, выдача полисов ОМС (в отдельных случаях), контроль качества медпомощи.",""],
+    ["Страховые медицинские организации","Выдача полисов ОМС, защита прав застрахованных, контроль качества и объёма медпомощи.",""],
+    ["Социальный фонд России","Назначение пенсий, пособий и компенсаций, выдача СНИЛС, меры социальной поддержки.","https://sfr.gov.ru"],
+    ["Росздравнадзор","Контроль и надзор в сфере здравоохранения, защита прав граждан, лицензионный контроль, рассмотрение жалоб.","https://roszdravnadzor.gov.ru"],
+    ["Уполномоченный по правам человека в РФ","Защита прав иностранных граждан, включая право на образование и медпомощь.","https://ombudsmanrf.org"],
+    ["Департамент здравоохранения субъекта РФ","Организация медпомощи по месту нахождения вуза, прикрепление к поликлинике.",""],
+    ["ГУВМ МВД России","Миграционный учёт, РВП, ВНЖ, гражданство, проверка статуса.","https://мвд.рф/"],
+    ["МФЦ «Мои документы»","Получение госуслуг, в т.ч. связанных с миграционным учётом и регистрацией по месту жительства.",""]
+  ];
+
+  var PORTALS = [
+    ["«Образование в России» (Education in Russia)","Официальный портал для иностранных граждан: каталог вузов, квота, стипендии, порядок подачи документов.","https://education-in-russia.com"],
+    ["Госуслуги","Единый портал госуслуг, включая суперсервис «Поступление в вуз онлайн».","https://gosuslugi.ru"],
+    ["«Поступление в вуз онлайн»","Суперсервис подачи документов в вузы в электронном виде.","https://postuplenie.gosuslugi.ru"],
+    ["«Study in Russia»","Государственный портал: инструкция для абитуриентов, документы, вступительные испытания, адаптация к жизни в РФ.","https://studyinrussia.ru"],
+    ["Информационно-образовательный проект «Образование в России»","Общая информация о российском образовании, помощь в подборе вуза по рейтингу и критериям.","https://studyinrussia.ru"],
+    ["Портал инклюзивного высшего образования","Профориентация, подбор вуза с учётом нозологии и региона, консультации по обучению и трудоустройству.","http://инклюзивноеобразование.рф"],
+    ["Атлас доступных профессий","Подбор вуза с учётом нозологии, условий труда, компетенций и региона проживания.","http://инклюзивноеобразование.рф"]
+  ];
+
+  var RIGHTS = {
+    "rt-edu":[
+      ["Право на образование без дискриминации","Ст. 79 ФЗ-273, п. 5 ст. 24 Конвенции о правах инвалидов"],
+      ["Создание специальных условий для получения образования","Ст. 79 ФЗ-273, ст. 19 ФЗ-181"],
+      ["Адаптация образовательных программ","Ст. 79 ФЗ-273, приказ Минобрнауки № 821 (ред. от 26.11.2025)"],
+      ["Проведение вступительных испытаний с учётом особенностей здоровья","Приказ Минобрнауки № 821, Методические рекомендации № АК-1782/05"],
+      ["Увеличение продолжительности вступительных испытаний","Приказ Минобрнауки № 821 (ред. от 26.11.2025)"],
+      ["Предоставление ассистента (помощника) на вступительных испытаниях","Приказ Минобрнауки № 821 (ред. от 26.11.2025)"],
+      ["Использование технических средств на вступительных испытаниях","Приказ Минобрнауки № 821 (ред. от 26.11.2025)"],
+      ["Право на обучение по адаптированным программам (при наличии ИПРА)","Ст. 79 ФЗ-273, приказ Минобрнауки № 821"],
+      ["Преимущественное право зачисления при равных баллах","Ст. 71 ФЗ-273 (для граждан РФ и отдельных категорий иностранцев)"]
+    ],
+    "rt-soc":[
+      ["Право на медико-социальную экспертизу (МСЭ)","Ст. 7 ФЗ-181, Постановление Правительства № 588"],
+      ["Право на индивидуальную программу реабилитации или абилитации (ИПРА)","Ст. 11 ФЗ-181"],
+      ["Право на медицинскую реабилитацию","Приказы Минздрава № 878н, № 788н (ред. 16.09.2025); ст. 40 ФЗ № 323-ФЗ"],
+      ["Право на бесплатную медпомощь в гос. и муниципальных учреждениях","Ст. 19 ФЗ-181, ФЗ-326, Постановление Правительства РФ № 631"],
+      ["Право на технические средства реабилитации (ТСР)","Ст. 11.1 ФЗ-181, Распоряжение Правительства РФ № 2347-р"],
+      ["Право на санаторно-курортное лечение (при мед. показаниях)","Ст. 6.2 ФЗ-178 «О государственной социальной помощи»"]
+    ],
+    "rt-labor":[
+      ["Квотирование рабочих мест для инвалидов (организации свыше 100 чел.)","Ст. 20, 21 ФЗ-181"],
+      ["Запрет дискриминации в трудовых отношениях","Ст. 3 ТК РФ, ст. 22 ФЗ-181"],
+      ["Сокращённая продолжительность рабочего времени (I и II группы — не более 35 ч/нед.)","Ст. 92 ТК РФ, ст. 23 ФЗ-181"],
+      ["Ежегодный оплачиваемый отпуск не менее 30 календарных дней","Ст. 23 ФЗ-181, ч. 3 ст. 115 ТК РФ"],
+      ["Право на профессиональное обучение и доп. профобразование","Ст. 19 ФЗ-181"]
+    ],
+    "rt-arch":[
+      ["Беспрепятственный доступ к объектам социальной, инженерной, транспортной инфраструктуры","Ст. 15 ФЗ-181"],
+      ["Обеспечение доступности зданий и сооружений образовательных организаций","Ст. 15 ФЗ-181, приказ Минобрнауки № 384"],
+      ["Обеспечение доступности общежитий и мест проживания","Ст. 15 ФЗ-181, приказ Минобрнауки № 384"],
+      ["Дублирование информации в доступных форматах (Брайль, звук, крупный шрифт)","Ст. 14, 15 ФЗ-181"],
+      ["Право на сопровождение при пользовании объектами инфраструктуры","Ст. 15 ФЗ-181"]
+    ],
+    "rt-legal":[
+      ["Право на государственную защиту прав и законных интересов","Ст. 2, 23 ФЗ-181"],
+      ["Право на обращение в госорганы, органы местного самоуправления и суд","Ст. 4 ФЗ № 115-ФЗ; ч. 3 ст. 62 Конституции РФ; ч. 2 ст. 1 ФЗ № 59-ФЗ; ч. 1 ст. 398 ГПК РФ; ст. 14, 15 ФЗ № 181-ФЗ"],
+      ["Право на получение бесплатной юридической помощи","ФЗ-324 «О бесплатной юридической помощи в РФ» (для граждан РФ и отдельных категорий иностранцев)"],
+      ["Право на информацию о правах и обязанностях в доступной форме","Ст. 14 ФЗ-181"]
+    ]
+  };
+
+  var GLOSSARY = [
+    ["Абитуриент","Лицо, поступающее в образовательную организацию высшего образования для обучения по программам бакалавриата, специалитета или магистратуры."],
+    ["Адаптированная образовательная программа","Образовательная программа, адаптированная для обучения лиц с ОВЗ с учётом особенностей их психофизического развития и индивидуальных возможностей, обеспечивающая коррекцию нарушений развития и социальную адаптацию."],
+    ["Апостиль","Специальный штамп, удостоверяющий подлинность подписи и печати на документе для его признания в странах-участницах Гаагской конвенции 1961 года. Для остальных стран требуется консульская легализация."],
+    ["Ассистивные технологии","Устройства, оборудование, ПО и услуги для поддержки функциональных возможностей лиц с инвалидностью (коляски, слуховые аппараты, программы экранного доступа, синтезаторы речи)."],
+    ["Ассистент (помощник)","Лицо из числа работников организации или привлечённых специалистов, оказывающее техническую помощь поступающему или обучающемуся с инвалидностью (перевернуть страницу, прочитать задание, помочь с перемещением)."],
+    ["Бюро медико-социальной экспертизы (Бюро МСЭ)","Филиалы главных бюро МСЭ по субъектам РФ, проводящие освидетельствование и принимающие решение об установлении инвалидности."],
+    ["Вид на жительство (ВНЖ)","Документ, подтверждающий право иностранного гражданина на постоянное проживание в РФ и свободный въезд/выезд."],
+    ["Врачебная комиссия","Комиссия врачей медицинской организации, принимающая решение о выдаче направления на МСЭ при наличии данных о стойком нарушении функций организма."],
+    ["Государственная академическая стипендия","Ежемесячная выплата студентам очной формы за счёт бюджета; иностранным гражданам в рамках квоты Правительства РФ выплачивается вне зависимости от успеваемости."],
+    ["Группа инвалидности","Категория степени ограничения жизнедеятельности: I группа — IV степень нарушений (90–100%); II группа — III степень (70–80%); III группа — II степень (40–60%)."],
+    ["Добровольное медицинское страхование (ДМС) иностранных граждан","Форма личного страхования, подтверждающая право на медпомощь в РФ; обязательна для временно пребывающих на срок более 90 дней, кроме лиц с правом на ОМС или особым международным статусом."],
+    ["Дорожная карта","План мероприятий по повышению доступности для инвалидов объектов и услуг в сфере образования (приказ Минобрнауки № 1399 от 02.12.2015)."],
+    ["Заявительный характер предоставления специальных условий","Принцип, согласно которому специальные условия предоставляются на основании письменного заявления абитуриента/студента и подтверждающих документов."],
+    ["Индивидуальная программа реабилитации и абилитации (ИПРА)","Документ по результатам МСЭ с перечнем реабилитационных мероприятий, ТСР и услуг; основание для специальных условий в вузе."],
+    ["Инвалид","Лицо со стойким расстройством функций организма, обусловленным заболеваниями, травмами или дефектами, приводящее к ограничению жизнедеятельности."],
+    ["Инфографика","Способ подачи информации в виде графических изображений и схем для наглядного представления алгоритма действий."],
+    ["Иностранный гражданин","Физическое лицо, не являющееся гражданином РФ и имеющее гражданство (подданство) иностранного государства."],
+    ["Иностранные обучающиеся","Иностранные граждане, поступившие в образовательную/научную организацию РФ по очной или очно-заочной форме на любую аккредитованную программу, включая аспирантуру."],
+    ["Квота Правительства РФ","Установленное Правительством РФ количество мест для приёма иностранных граждан на обучение за счёт федерального бюджета."],
+    ["Конвенция о правах инвалидов","Международный договор ООН от 13.12.2006, ратифицированный РФ; закрепляет право на образование, самостоятельную жизнь, мобильность и здоровье."],
+    ["Легализация документов","Процедура подтверждения подлинности документов, выданных за рубежом; для стран вне Гаагской конвенции — консульская легализация."],
+    ["Лицо с ограниченными возможностями здоровья (ОВЗ)","Физическое лицо с недостатками в развитии, подтверждёнными ПМПК, препятствующими получению образования без специальных условий."],
+    ["Материальная помощь","Единовременная или периодическая выплата студенту по решению стипендиальной комиссии при подтверждённых трудностях."],
+    ["Медико-социальная экспертиза (МСЭ)","Определение потребностей освидетельствуемого лица в мерах социальной защиты, включая реабилитацию, на основе оценки ограничений жизнедеятельности."],
+    ["Медицинская реабилитация","Комплекс мероприятий по восстановлению или компенсации нарушенных функций организма и социальной интеграции пациента."],
+    ["Медицинское освидетельствование иностранных граждан","Обязательная процедура для иностранцев, прибывших в РФ на срок более 90 дней не для трудовой деятельности, включая обследование на ВИЧ-инфекцию и иные заболевания."],
+    ["Меры социальной поддержки","Формы помощи, предусмотренные законодательством РФ и субъектов, для обеспечения уровня жизнедеятельности отдельных категорий граждан."],
+    ["Направление на медико-социальную экспертизу","Документ врачебной комиссии, являющийся основанием для проведения МСЭ."],
+    ["Нозология","Классификация заболеваний и нарушений здоровья, используемая для определения особых образовательных потребностей."],
+    ["Нотариально заверенный перевод","Перевод документа на русский язык, заверенный нотариусом; обязателен для всех иностранных документов, представляемых в вузы и госорганы РФ."],
+    ["Обучающийся с ограниченными возможностями здоровья","Лицо до 18 лет с недостатками развития, подтверждёнными ПМПК, препятствующими получению образования без специальных условий."],
+    ["Общее заболевание","Соматическое заболевание внутренних органов, ограничивающее жизнедеятельность (диабет, астма, эпилепсия, сердечно-сосудистые заболевания и др.)."],
+    ["Обязательное медицинское страхование (ОМС)","Система социального страхования, обеспечивающая бесплатную медпомощь гражданам РФ и отдельным категориям иностранных граждан."],
+    ["Ограничение жизнедеятельности","Полная или частичная утрата способности к самообслуживанию, передвижению, общению, обучению или труду."],
+    ["Олимпиада «Open Doors»","Открытая международная олимпиада для иностранных граждан; победители поступают на бюджетные места без вступительных испытаний."],
+    ["Перечень медицинских обследований","Утверждённый перечень обследований, необходимых для МСЭ (приказ Минтруда/Минздрава № 259н/238н)."],
+    ["Полис ДМС","Документ, подтверждающий договор ДМС и право на медуслуги в объёме договора."],
+    ["Порядок приёма на обучение","Порядок регламентации приёма на программы высшего образования (приказ Минобрнауки № 821, ред. от 26.11.2025)."],
+    ["Преимущественное право зачисления","Право преимущественного зачисления при равном количестве баллов для отдельных категорий абитуриентов, включая инвалидов и лиц с ОВЗ."],
+    ["Разрешение на временное проживание (РВП)","Документ, подтверждающий право на временное проживание в РФ до получения ВНЖ; РВПО выдаётся на срок обучения плюс 180 дней после его окончания."],
+    ["Расстройство аутистического спектра (РАС)","Группа нарушений развития с отклонениями в социальном взаимодействии и коммуникации, требующая специальных условий обучения."],
+    ["Ребёнок-инвалид","Лицо до 18 лет со стойким расстройством функций организма, требующее социальной защиты."],
+    ["Россотрудничество","Федеральное агентство по делам СНГ, соотечественников за рубежом и международного гуманитарного сотрудничества; осуществляет отбор иностранных граждан на обучение в РФ по квоте."],
+    ["Слепоглухота","Одновременное нарушение зрения и слуха, требующее тактильных средств коммуникации и услуг тифлосурдопереводчика."],
+    ["СНИЛС","Страховой номер индивидуального лицевого счёта; необходим для социальных выплат и льгот. Иностранцы с ВНЖ/РВП получают его в Социальном фонде России."],
+    ["Социальная стипендия","Ежемесячная выплата студентам-очникам льготных категорий (в т.ч. инвалидам I и II групп) независимо от успеваемости."],
+    ["Соотечественники за рубежом","Лица с гражданством СССР/РСФСР/РФ или их потомки, проживающие за рубежом; имеют особые права при поступлении в вузы РФ."],
+    ["Сурдопереводчик","Специалист по переводу устной речи на русский жестовый язык (РЖЯ) и обратно."],
+    ["Социальная поддержка","Государственная система пособий, льгот и услуг для уязвимых категорий граждан; оператор федеральных выплат — Социальный фонд России."],
+    ["Тяжёлые нарушения речи (ТНР)","Стойкие нарушения формирования компонентов речевой системы, препятствующие обучению без специальных условий."],
+    ["Тифлопедагог","Специалист по обучению и развитию лиц с нарушениями зрения, владеющий системой Брайля."],
+    ["Тифлосурдопереводчик","Специалист, владеющий тактильной жестовой речью и системой Брайля, для перевода слепоглухим лицам."],
+    ["Тьютор","Педагогический работник, осуществляющий индивидуальное сопровождение обучающегося с инвалидностью."],
+    ["Учебная виза","Виза для въезда в РФ с целью обучения; выдаётся на основании приглашения от вуза на период обучения."],
+    ["Члены сборных команд иностранного государства","Победители и призёры международных олимпиад, признанных Правительством РФ; имеют право на приём без экзаменов в течение 4 лет."],
+    ["Шрифт Брайля","Рельефно-точечный тактильный шрифт для письма и чтения слепыми и слабовидящими."]
+  ];
+
+  /* ---------------- render: simple tables ---------------- */
+  function el(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+
+  var npaListEl = document.getElementById('npaList');
+  NPA.forEach(function(t){ npaListEl.appendChild(el('li', null, t)); });
+
+  var supportBody = document.getElementById('supportTable');
+  SUPPORT.forEach(function(r){
+    var tr = document.createElement('tr');
+    tr.appendChild(el('td', null, '<strong>'+r[0]+'</strong>'));
+    tr.appendChild(el('td', null, r[1]));
+    supportBody.appendChild(tr);
+  });
+
+  function renderDir(containerId, data){
+    var grid = document.getElementById(containerId);
+    data.forEach(function(r){
+      var card = el('div','dir-card');
+      card.appendChild(el('h4', null, r[0]));
+      card.appendChild(el('p', null, r[1]));
+      if(r[2]){
+        var a = document.createElement('a');
+        a.href = r[2].indexOf('http')===0 ? r[2] : 'https://'+r[2];
+        a.target = '_blank'; a.rel='noopener';
+        a.textContent = r[2].replace(/^https?:\/\//,'') + ' →';
+        card.appendChild(a);
+      } else {
+        card.appendChild(el('span', null, '<span style="font-size:12.5px;color:var(--ink-faint);font-family:Manrope,sans-serif;">Уточняется у оператора / на сайте региона</span>'));
+      }
+      grid.appendChild(card);
+    });
+  }
+  renderDir('orgsGrid', ORGS);
+  renderDir('portalsGrid', PORTALS);
+
+  Object.keys(RIGHTS).forEach(function(id){
+    var body = document.getElementById(id);
+    RIGHTS[id].forEach(function(r, i){
+      var tr = document.createElement('tr');
+      tr.appendChild(el('td','num', String(i+1)));
+      tr.appendChild(el('td', null, '<strong>'+r[0]+'</strong>'));
+      tr.appendChild(el('td', null, r[1]));
+      body.appendChild(tr);
+    });
+  });
+
+  /* ---------------- glossary (reusable — rendered twice: quick block + Chapter 7) ---------------- */
+  var sorted = GLOSSARY.slice().sort(function(a,b){ return a[0].localeCompare(b[0],'ru'); });
+  var letters = [];
+  sorted.forEach(function(t){ var L=t[0][0].toUpperCase(); if(letters.indexOf(L)===-1) letters.push(L); });
+
+  function initGlossary(ids){
+    var listEl = document.getElementById(ids.list);
+    var emptyEl = document.getElementById(ids.empty);
+    var countEl = document.getElementById(ids.count);
+    var letterNavEl = document.getElementById(ids.letterNav);
+    var searchEl = document.getElementById(ids.search);
+    if(!listEl) return;
+
+    function render(items){
+      listEl.innerHTML='';
+      var curLetter='';
+      items.forEach(function(t){
+        var L = t[0][0].toUpperCase();
+        if(L!==curLetter){
+          curLetter=L;
+          var lab = el('div','gloss-letter-label', L);
+          lab.dataset.letter = L;
+          listEl.appendChild(lab);
+        }
+        var card = el('div','term-card');
+        card.appendChild(el('dt', null, t[0]));
+        card.appendChild(el('dd', null, t[1]));
+        listEl.appendChild(card);
+      });
+      emptyEl.style.display = items.length? 'none':'block';
+      countEl.textContent = items.length + ' из ' + GLOSSARY.length + ' терминов';
+    }
+
+    function filter(q){
+      q = q.trim().toLowerCase();
+      if(!q){ render(sorted); return; }
+      var filtered = sorted.filter(function(t){
+        return t[0].toLowerCase().indexOf(q)!==-1 || t[1].toLowerCase().indexOf(q)!==-1;
+      });
+      render(filtered);
+    }
+
+    letters.forEach(function(L){
+      var btn = document.createElement('button');
+      btn.type='button'; btn.textContent=L; btn.dataset.letter=L;
+      btn.addEventListener('click', function(){
+        searchEl.value='';
+        filter('');
+        var target = listEl.querySelector('.gloss-letter-label[data-letter="'+L+'"]');
+        if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+      letterNavEl.appendChild(btn);
+    });
+
+    render(sorted);
+    searchEl.addEventListener('input', function(){ filter(this.value); });
+  }
+
+  initGlossary({list:'glossList', empty:'glossEmpty', count:'glossCount', letterNav:'letterNav', search:'glossSearch'});
+
+  /* ---------------- checklist (localStorage) ---------------- */
+  var checklistEl = document.getElementById('docsChecklist');
+  var progressEl = document.getElementById('docsProgress');
+  var STORE_KEY = 'rudn_spravochnik_docs_v1';
+  var saved = {};
+  try{ saved = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); }catch(e){ saved = {}; }
+
+  function updateProgress(){
+    var boxes = checklistEl.querySelectorAll('input[type=checkbox]');
+    var checked = 0;
+    boxes.forEach(function(b){ if(b.checked) checked++; b.closest('li').classList.toggle('checked', b.checked); });
+    progressEl.textContent = 'Собрано ' + checked + ' из ' + boxes.length;
+  }
+  checklistEl.querySelectorAll('input[type=checkbox]').forEach(function(box){
+    if(saved[box.id]) box.checked = true;
+    box.addEventListener('change', function(){
+      saved[box.id] = box.checked;
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(saved)); }catch(e){}
+      updateProgress();
+    });
+  });
+  updateProgress();
+
+  /* ---------------- sidebar mobile toggle ---------------- */
+  var sidebar = document.getElementById('sidebar');
+  var scrim = document.getElementById('scrim');
+  var navToggle = document.getElementById('navToggle');
+  function closeNav(){ sidebar.classList.remove('open'); scrim.classList.remove('show'); navToggle.setAttribute('aria-expanded','false'); }
+  function openNav(){ sidebar.classList.add('open'); scrim.classList.add('show'); navToggle.setAttribute('aria-expanded','true'); }
+  navToggle.addEventListener('click', function(){ sidebar.classList.contains('open') ? closeNav() : openNav(); });
+  scrim.addEventListener('click', closeNav);
+  sidebar.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeNav); });
+
+  /* ---------------- active link highlighting ---------------- */
+  var sideLinks = Array.prototype.slice.call(document.querySelectorAll('.side-link'));
+  var sections = sideLinks.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  function onScroll(){
+    var pos = window.scrollY + 140;
+    var current = null;
+    sections.forEach(function(s){ if(s.offsetTop <= pos) current = s; });
+    sideLinks.forEach(function(a){ a.classList.remove('active'); });
+    if(current){
+      var link = sideLinks.find(function(a){ return a.getAttribute('href') === '#'+current.id; });
+      if(link) link.classList.add('active');
+    }
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>
